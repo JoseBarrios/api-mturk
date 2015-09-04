@@ -1,7 +1,10 @@
-import test from "tape"
-import mturkApi from "../"
+var mturk = require('../src/index.js');
+var options = require('./config.js')
 
-test("mturkApi", (t) => {
-  t.plan(1)
-  t.equal(true, mturkApi(), "return true")
-})
+mturk.connect(options).then(function(client){
+    client.api('searchHITs', {}).then(function(response){
+        console.log(response);
+    }).catch(console.error)
+}).catch(console.error)
+
+console.log(mturk);

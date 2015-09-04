@@ -8,24 +8,6 @@
         "dist/"
     ],
     "scripts": {
-        "clean": "rimraf dist",
-        "lint": "eslint src test",
-        "check": "npm run lint -s && dependency-check package.json --entry src",
-        "watch": "watch 'npm run build' src test",
-        "test": "babel-node test/*.js | tspec",
-        "prebuild": "npm run check -s && npm run clean -s",
-        "build": "babel --optional runtime src -d dist",
-        "postbuild": "npm run test -s",
-        "coverage": "babel-node node_modules/.bin/isparta cover test/*.js",
-        "coveralls": "npm run coverage -s && coveralls < coverage/lcov.info",
-        "postcoveralls": "rimraf ./coverage",
-        "prepublish": "npm run build -s",
-        "deploy": "git pull --rebase origin master && git push origin master",
-        "patch": "npm version patch && npm publish",
-        "minor": "npm version minor && npm publish",
-        "major": "npm version major && npm publish",
-        "postpublish": "git push origin master --follow-tags",
-        "toc": "doctoc --github --title \"# Changelog\" CHANGELOG.md"
     },
     "repository": {
         "type": "git",
@@ -40,20 +22,14 @@
         "url": "https://github.com//mturk-api/issues"
     },
     "homepage": "https://github.com//mturk-api#readme",
-    "devDependencies": {
-        "eslint": "*",
-        "babel-eslint": "*",
-        "babel": "*",
-        "coveralls": "*",
-        "isparta": "*",
-        "tape": "*",
-        "tap-spec": "*",
-        "rimraf": "*",
-        "dependency-check": "*",
-        "watch": "*",
-        "doctoc": "*"
-    },
     "dependencies": {
-        "babel-runtime": "*"
+        "crypto-js": "^3.1.5",
+        "json-schema-deref-local": "^0.2.1",
+        "json-schema-instantiator": "^0.2.2",
+        "lodash": "^3.10.1",
+        "moment": "^2.10.6",
+        "promise": "^7.0.4",
+        "soap": "~0.9.1",
+        "z-schema": "^3.12.2"
     }
 }

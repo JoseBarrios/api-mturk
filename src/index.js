@@ -23,7 +23,6 @@ function MTurkAPI() {
     var api = this;
 
     api.connect = function(options) {
-
         return new Promise(function (resolve, reject) {
             soap.createClient(WSDL, function(err, client) {
                 if(err){ reject(err) }
@@ -42,14 +41,18 @@ function MTurkAPI() {
                     }
                 })
 
-                wrapper.api = function(opName, args) {
+                wrapper.validOps = function(){
+                    return operations;
+                }
+
+                wrapper.req = function(opName, args) {
                     return new Promise(function(resolve, reject){
                         if(wrapper[opName] && typeof wrapper[opName] == 'function') {
                             resolve(wrapper[opName](args));
                         }
                         else {
                             //handle non-existant method
-                            reject('Invalid Amazon Mechanical Turk API operation '+opName);
+                            reject('Invalid Amazon Mechanical Turk API operation '+opName+'. To get a list of valid operations, call api.validOps()');
                         }
                     })
                 };
@@ -80,9 +83,7 @@ function getRequestMessage(options, operation, parameters){
 }
 
 function wrapClientMethods(client, wrapper, options, operation){
-    var camelCaseOperation = _.camelCase(operation);
-    camelCaseOperation = camelCaseOperation.replace(/hit/i, 'HIT');
-    wrapper[camelCaseOperation] = function(params){
+    wrapper[operation] = function(params){
         var validParams = {}
         var paramKeys = _.keys(params);
         paramKeys.forEach(function(key){

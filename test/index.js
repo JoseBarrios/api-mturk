@@ -1,10 +1,24 @@
 var mturk = require('../src/index.js');
-var options = require('./config.js')
+var config = require('./config.js')
 
-mturk.connect(options).then(function(client){
-    client.api('searchHITs', {}).then(function(response){
-        console.log(response);
-    }).catch(console.error)
-}).catch(console.error)
 
-console.log(mturk);
+
+
+mturk.connect(config).then(function(api){
+    //Example operation
+    api.req('SearchHITs').then(handleResponse, handleError);
+
+}, function(connError){
+    //Handle connection error here
+    console.error(connError);
+});
+
+function handleResponse(res){
+    //Do something with response
+    //console.log('RESPONSE', res);
+}
+
+function handleError(err){
+    //Do something with error
+    console.log('ERROR', err);
+}

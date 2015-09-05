@@ -1,42 +1,42 @@
 {
-    "name": "mturk-api",
-    "version": "0.0.6",
-    "description": "JS implementation of Amazon Mechanical Turk (mturk) API",
-    "main": "dist/index-min.js",
-    "files": [
-        "bin/",
-        "dist/"
-    ],
-    "scripts": {
-        "test": " mocha"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com//mturk-api.git"
-    },
-    "keywords": [
-        "amazon mechanical turk api mturk"
-    ],
-    "author": "Jose Barrios <jlbarrios22@gmail.com>",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com//mturk-api/issues"
-    },
-    "homepage": "https://github.com//mturk-api#readme",
-    "dependencies": {
-        "crypto-js": "^3.1.5",
-        "json-schema-deref-local": "^0.2.1",
-        "json-schema-instantiator": "^0.2.2",
-        "lodash": "^3.10.1",
-        "moment": "^2.10.6",
-        "promise": "^7.0.4",
-        "soap": "~0.9.1",
-        "z-schema": "^3.12.2"
-    },
-    "devDependencies": {
-        "gulp": "^3.9.0",
-        "gulp-minify": "0.0.5",
-        "mocha": "^2.3.0",
-        "should": "^7.1.0"
-    }
+  "name": "mturk-api",
+  "version": "0.0.7",
+  "description": "JS implementation of Amazon Mechanical Turk (mturk) API",
+  "main": "dist/index-min.js",
+  "files": [
+    "bin/",
+    "dist/"
+  ],
+  "scripts": {
+    "test": " mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com//mturk-api.git"
+  },
+  "keywords": [
+    "amazon mechanical turk api mturk"
+  ],
+  "author": "Jose Barrios <jlbarrios22@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com//mturk-api/issues"
+  },
+  "homepage": "https://github.com//mturk-api#readme",
+  "dependencies": {
+    "crypto-js": "^3.1.5",
+    "json-schema-deref-local": "^0.2.1",
+    "json-schema-instantiator": "^0.2.2",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "promise": "^7.0.4",
+    "soap": "~0.9.1",
+    "z-schema": "^3.12.2"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-minify": "0.0.5",
+    "mocha": "^2.3.0",
+    "should": "^7.1.0"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "mturk-api",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "JS implementation of Amazon Mechanical Turk (mturk) API",
   "main": "dist/index.js",
   "files": [

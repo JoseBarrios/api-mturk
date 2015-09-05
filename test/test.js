@@ -29,7 +29,6 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
 
-
     it('GetAccountBalance', function(done) {
         API.req('GetAccountBalance').then(function(res) {
             (res.Request.IsValid).should.equal(true);

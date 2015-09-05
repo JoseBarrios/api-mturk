@@ -103,7 +103,6 @@ function wrapClientMethods(client, wrapper, options, operation){
                             details.Request = {};
                             details.Request.IsValid = true;
                             details.Operation = operation;
-                            //console.log(details);
                             resolve(details);
                             break;
 
@@ -111,7 +110,6 @@ function wrapClientMethods(client, wrapper, options, operation){
                                 var details = response.QualificationType[0];
                             if(details.Request.IsValid === "True"){
                                 details.Request.IsValid = true;
-                                //console.log(details.Request.IsValid);
                                 details.Operation = operation;
                                 resolve(details);
                             } else { reject(details.Request.Errors.Error[0])}
@@ -122,7 +120,6 @@ function wrapClientMethods(client, wrapper, options, operation){
                             if(details.Request.IsValid === "True"){
                                 details.Request.IsValid = true;
                                 details.Operation = operation;
-                                //console.log(details);
                                 resolve(details);
                             } else { reject(details.Request.Errors.Error[0]) }
                             break;
@@ -132,7 +129,6 @@ function wrapClientMethods(client, wrapper, options, operation){
                             if(details.Request.IsValid === "True"){
                                 details.Request.IsValid = true;
                                 details.Operation = operation;
-                                //console.log(details);
                                 resolve(details);
                             } else { reject(details.Request.Errors.Error[0]) }
                             break;
@@ -142,7 +138,6 @@ function wrapClientMethods(client, wrapper, options, operation){
                             if(details.Request.IsValid === "True"){
                                 details.Request.IsValid = true;
                                 details.Operation = operation;
-                                //console.log(details);
                                 resolve(details);
                             } else { reject(details.Request.Errors.Error[0]) }
                             break;
@@ -151,7 +146,6 @@ function wrapClientMethods(client, wrapper, options, operation){
                             if(details.Request.IsValid === "True"){
                                 details.Request.IsValid = true;
                                 details.Operation = operation;
-                                //console.log(details);
                                 resolve(details);
                             } else { reject(details.Request.Errors.Error[0]) }
                             break;

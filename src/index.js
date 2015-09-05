@@ -21,7 +21,6 @@ var SERVICE = 'AWSMechanicalTurkRequester';
 function MTurkAPI() {
 
     var api = this;
-
     api.connect = function(options) {
         return new Promise(function (resolve, reject) {
             soap.createClient(WSDL, function(err, client) {
@@ -36,24 +35,14 @@ function MTurkAPI() {
                 operations.forEach(function(operation){
                     wrapClientMethods(client, wrapper, options, operation);
                     processedOps++;
-                    if(processedOps === numOperations){
-                        resolve(wrapper)
-                    }
+                    if(processedOps === numOperations){ resolve(wrapper) }
                 })
 
-                wrapper.validOps = function(){
-                    return operations;
-                }
-
+                wrapper.validOps = function(){ return operations; }
                 wrapper.req = function(opName, args) {
                     return new Promise(function(resolve, reject){
-                        if(wrapper[opName] && typeof wrapper[opName] == 'function') {
-                            resolve(wrapper[opName](args));
-                        }
-                        else {
-                            //handle non-existant method
-                            reject('Invalid Amazon Mechanical Turk API operation '+opName+'. To get a list of valid operations, call api.validOps()');
-                        }
+                        if(wrapper[opName] && typeof wrapper[opName] == 'function') { resolve(wrapper[opName](args)); }
+                        else { reject("Invalid Amazon Mechanical Turk API operation: '"+opName+"'. See the docs here: https://goo.gl/6RCpKU"); }
                     })
                 };
             })
@@ -84,33 +73,89 @@ function getRequestMessage(options, operation, parameters){
 
 function wrapClientMethods(client, wrapper, options, operation){
     wrapper[operation] = function(params){
-        var validParams = {}
-        var paramKeys = _.keys(params);
-        paramKeys.forEach(function(key){
-            validKey = _.capitalize(key)
-            validParams[validKey] = params[key];
-        })
-
+        var params = params || {};
         return new Promise(function(resolve, reject){
             /////////////////////////////////////////////////////////////
             // VALIDATE REQUEST /////////////////////////////////////////
             /////////////////////////////////////////////////////////////
             var paramSchema = schemas.definitions[operation + 'Request'];
-            var instance = instantiator.instantiate(paramSchema);
-            validator.validate(validParams, paramSchema, function (err, valid) {
+            //var instance = instantiator.instantiate(paramSchema);
+            validator.validate(params, paramSchema, function (err, valid) {
                 if(err){reject(err)}
-                validParams = _.merge(instance, validParams);
+                //params = _.merge(instance, params);
+
                 //////////////////////////////////////////////////////////////////////////////
                 // RESPONSE //////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////
                 if(typeof client[operation] === 'undefined'){reject('Invalid operation: '+operation)}
-                client[operation](getRequestMessage(options, operation, validParams), function(err, response){
+                client[operation](getRequestMessage(options, operation, params), function(err, response){
                     var keys = _.keys(response);
                     var responseResult = keys[1];
                     var schema = schemas.definitions[responseResult];
                     validator.validate(response, schema, function (err, valid) {
                         if(err){reject(err)}
-                        resolve(response);
+                        var result = operation + 'Result';
+                        switch(operation){
+
+                            case 'GetAccountBalance':
+                                var details = response[responseResult][0];
+                            details = details.AvailableBalance;
+                            details.Request = {};
+                            details.Request.IsValid = true;
+                            details.Operation = operation;
+                            //console.log(details);
+                            resolve(details);
+                            break;
+
+                            case 'CreateQualificationType':
+                                var details = response.QualificationType[0];
+                            if(details.Request.IsValid === "True"){
+                                details.Request.IsValid = true;
+                                //console.log(details.Request.IsValid);
+                                details.Operation = operation;
+                                resolve(details);
+                            } else { reject(details.Request.Errors.Error[0])}
+                            break;
+
+                            case 'UpdateQualificationType':
+                                var details = response.QualificationType[0];
+                            if(details.Request.IsValid === "True"){
+                                details.Request.IsValid = true;
+                                details.Operation = operation;
+                                //console.log(details);
+                                resolve(details);
+                            } else { reject(details.Request.Errors.Error[0]) }
+                            break;
+
+                            case 'GetQualificationType':
+                                var details = response.QualificationType[0];
+                            if(details.Request.IsValid === "True"){
+                                details.Request.IsValid = true;
+                                details.Operation = operation;
+                                //console.log(details);
+                                resolve(details);
+                            } else { reject(details.Request.Errors.Error[0]) }
+                            break;
+
+                            case 'GetHIT':
+                                var details = response.HIT[0];
+                            if(details.Request.IsValid === "True"){
+                                details.Request.IsValid = true;
+                                details.Operation = operation;
+                                //console.log(details);
+                                resolve(details);
+                            } else { reject(details.Request.Errors.Error[0]) }
+                            break;
+
+                            default: details = response[result][0];
+                            if(details.Request.IsValid === "True"){
+                                details.Request.IsValid = true;
+                                details.Operation = operation;
+                                //console.log(details);
+                                resolve(details);
+                            } else { reject(details.Request.Errors.Error[0]) }
+                            break;
+                        };
                     });
                 });
             });

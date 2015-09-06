@@ -2,7 +2,7 @@
 //                   Imports
 ////////////////////////////////////////////////////
 var deref = require('json-schema-deref-local');
-var schemas = deref(require(process.cwd() + '/schema/API.json'));
+var schemas = deref(require('../schema/API.json'));
 var instantiator = require('json-schema-instantiator');
 var EventEmitter = require("events").EventEmitter;
 var CryptoJS = require('crypto-js');

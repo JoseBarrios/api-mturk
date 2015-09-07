@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>mturk-api by JoseBarrios</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">mturk-api</h1>
+      <h2 class="project-tagline">Sane Amazon Mechanical Turk API implementation in Javascript</h2>
+      <a href="https://github.com/JoseBarrios/mturk-api" class="btn">View on GitHub</a>
+      <a href="https://github.com/JoseBarrios/mturk-api/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/JoseBarrios/mturk-api/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="mturk-api" class="anchor" href="#mturk-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>mturk-api</h1>
+
+<p><a href="https://npmjs.org/package/mturk-api"><img src="https://img.shields.io/npm/v/mturk-api.svg?style=flat-square" alt="NPM version"></a>
+<a href="https://npmjs.org/package/mturk-api"><img src="http://img.shields.io/npm/dm/mturk-api.svg?style=flat-square" alt="Downloads"></a></p>
+
+<blockquote>
+<p>JS implementation of Amazon Mechanical Turk (mturk) API</p>
+</blockquote>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<div class="highlight highlight-sh"><pre>npm install mturk-api</pre></div>
+
+<h2>
+<a id="basic-usage" class="anchor" href="#basic-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic usage</h2>
+
+<div class="highlight highlight-js"><pre> <span class="pl-k">var</span> mturk <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>mturk-api<span class="pl-pds">'</span></span>);
+
+ <span class="pl-k">var</span> config <span class="pl-k">=</span> {
+    access <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>ACCESS_KEY_GOES_HERE<span class="pl-pds">'</span></span>,
+    secret <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>SECRET_KEY_GOES_HERE<span class="pl-pds">'</span></span>,
+    sandbox<span class="pl-k">:</span> <span class="pl-c1">true</span>
+ }
+
+ mturk.connect(config).then(<span class="pl-k">function</span>(<span class="pl-smi">api</span>){
+   <span class="pl-c">//Example operation</span>
+   api.req(<span class="pl-s"><span class="pl-pds">'</span>SearchHITs<span class="pl-pds">'</span></span>, { PageSize<span class="pl-k">:</span> <span class="pl-c1">20</span> }).then(handleResponse, handleError);
+
+ }, <span class="pl-k">function</span>(<span class="pl-smi">connError</span>){
+   <span class="pl-c">//Handle connection error here</span>
+   <span class="pl-en">console</span><span class="pl-c1">.error</span>(connError);
+
+ });
+
+ <span class="pl-k">function</span> <span class="pl-en">handleResponse</span>(<span class="pl-smi">res</span>){
+   <span class="pl-c">//Do something with response</span>
+ }
+
+ <span class="pl-k">function</span> <span class="pl-en">handleError</span>(<span class="pl-smi">err</span>){
+   <span class="pl-c">//Do something with error</span>
+ }</pre></div>
+
+<h2>
+<a id="supports" class="anchor" href="#supports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supports</h2>
+
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveAssignmentOperation.html">ApproveAssignment</a></td>
+<td>{ <strong>AssignmentId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveRejectedAssignmentOperation.html">ApproveRejectedAssignment</a></td>
+<td>{ <strong>AssignmentId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_AssignQualificationOperation.html">AssignQualification</a></td>
+<td>{ <strong>QualificationTypeId</strong>:String, <strong>WorkerId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_BlockWorkerOperation.html">BlockWorker</a></td>
+<td>{ <strong>WorkerId</strong>:String, <strong>Reason</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ChangeHITTypeOfHITOperation.html">ChangeHITTypeOfHIT</a></td>
+<td>{ <strong>HITId</strong>:String, <strong>HITTypeId</strong>:String}</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateHITOperation.html">CreateHIT</a></td>
+<td>{ <strong>Title</strong>:String, <strong>Description</strong>:String, <strong>AssignmentDurationInSeconds</strong>:Number, <strong>LifetimeInSeconds</strong>:Number } OR {<strong>HITTypeId</strong>:String, <strong>LifetimeInSeconds</strong>:Number }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateQualificationTypeOperation.html">CreateQualificationType</a></td>
+<td>{ <strong>Name</strong>:String, <strong>Description</strong>:String, <strong>QualificationTypeStatus</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisableHITOperation.html">DisableHIT</a></td>
+<td>{ <strong>HITId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisposeHITOperation.html">DisposeHIT</a></td>
+<td>{ <strong>HitId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisposeQualificationTypeOperation.html">DisposeQualificationType</a></td>
+<td>{<strong>QualificationTypeId</strong>:String}</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ExtendHITOperation.html">ExtendHIT</a></td>
+<td>{ <strong>HitId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ForceExpireHITOperation.html">ForceExpireHIT</a></td>
+<td>{ <strong>HitId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetAccountBalanceOperation.html">GetAccountBalance</a></td>
+<td>None</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetAssignmentOperation.html">GetAssignment</a></td>
+<td>{ <strong>AssignmentId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetAssignmentsForHITOperation.html">GetAssignmentsForHIT</a></td>
+<td>{ <strong>HITId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetBlockedWorkersOperation.html">GetBlockedWorkers</a></td>
+<td><em>None</em></td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetBonusPaymentsOperation.html">GetBonusPayments</a></td>
+<td>{ <strong>HITId</strong>:String } OR { <strong>AssignmentId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetFileUploadURLOperation.html">GetFileUploadURL</a></td>
+<td>{ <strong>AssignmentId</strong>:String, <strong>QuestionIdentifier</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetHITOperation.html">GetHIT</a></td>
+<td>{ <strong>HITId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetHITsForQualificationTypeOperation.html">GetHITsForQualificationType</a></td>
+<td>{ <strong>QualificationTypeId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationsForQualificationTypeOperation.html">GetQualificationsForQualificationType</a></td>
+<td>{ <strong>QualificationTypeId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationRequestsOperation.html">GetQualificationRequests</a></td>
+<td><em>None</em></td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationScoreOperation.html">GetQualificationScore</a></td>
+<td>{  <strong>QualificationTypeId</strong>:String, <strong>SubjectId</strong>:String}</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationTypeOperation.html">GetQualificationType</a></td>
+<td>{  <strong>QualificationTypeId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetRequesterStatisticOperation.html">GetRequesterStatistic</a></td>
+<td>{ <strong>Statistic</strong>:String, <strong>TimePeriod</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetRequesterWorkerStatisticOperation.html">GetRequesterWorkerStatistic</a></td>
+<td>{<strong>Statistic</strong>:String, <strong>WorkerId</strong>:String, <strong>TimePeriod</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetReviewableHITsOperation.html">GetReviewableHITs</a></td>
+<td><em>None</em></td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetReviewResultsForHitOperation.html">GetReviewResultsForHIT</a></td>
+<td>{ <strong>HITId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GrantBonusOperation.html">GrantBonus</a></td>
+<td>{ <strong>WorkerId</strong>:String, <strong>AssignmentId</strong>:String, <strong>BonusAmount</strong>:Object, <strong>Reason</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GrantQualificationOperation.html">GrantQualification</a></td>
+<td>{ <strong>QualificationRequestId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_NotifyWorkersOperation.html">NotifyWorkers</a></td>
+<td>{ <strong>Subject</strong>:String, <strong>MessageText</strong>:String, <strong>WorkerId</strong>:Array}</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RegisterHITTypeOperation.html">RegisterHITType</a></td>
+<td>{ <strong>Title</strong>:String, <strong>Description</strong>:String, <strong>Reward</strong>:Object, <strong>AssignmentDurationInSeconds</strong>:Number }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RejectAssignmentOperation.html">RejectAssignment</a></td>
+<td>{ <strong>AssignmentId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RejectQualificationRequestOperation.html">RejectQualificationRequest</a></td>
+<td>{ <strong>QualificationRequestId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RevokeQualificationOperation.html">RevokeQualification</a></td>
+<td>{ <strong>Subject</strong>:String, <strong>QualificationTypeId</strong>:String, <strong>Reason</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SearchHITsOperation.html">SearchHITs</a></td>
+<td><em>None</em></td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SearchQualificationTypesOperation.html">SearchQualificationTypes</a></td>
+<td>{ <strong>MustBeRequestable</strong>:Boolean }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SendTestEventNotificationOperation.html">SendTestEventNotification</a></td>
+<td>{  <strong>Notification</strong>:Object, <strong>TestEventType</strong>:Object }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SetHITAsReviewingOperation.html">SetHITAsReviewing</a></td>
+<td>{ <strong>HITId</strong>:String }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SetHITTypeNotificationOperation.html">SetHITTypeNotification</a></td>
+<td>{ <strong>HITTypeId</strong>:String, <strong>Notification</strong>:Object, }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UnblockWorkerOperation.html">UnblockWorker</a></td>
+<td>{ <strong>WorkerId</strong>:String,  }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UpdateQualificationScoreOperation.html">UpdateQualificationScore</a></td>
+<td>{ <strong>QualificationTypeId</strong>:String, <strong>SubjectId</strong>:String, <strong>IntegerValue</strong>:Number }</td>
+</tr>
+<tr>
+<td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UpdateQualificationTypeOperation.html">UpdateQualificationType</a></td>
+<td>{ <strong>QualificationTypeId</strong>:String }</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>MIT © <a href="http://github.com/JoseBarrios">Jose Barrios</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/JoseBarrios/mturk-api">mturk-api</a> is maintained by <a href="https://github.com/JoseBarrios">JoseBarrios</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>

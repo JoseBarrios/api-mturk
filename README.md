@@ -1,6 +1,8 @@
 [![NPM version][npm-image]][npm-url]
 [![Downloads][download-badge]][npm-url]
 
+![alt text](http://goo.gl/OAMdoY "Brainup")
+
 ### Install
 ```sh
 npm install mturk-api

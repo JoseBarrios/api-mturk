@@ -3,8 +3,6 @@
 [![NPM version][npm-image]][npm-url]
 [![Downloads][download-badge]][npm-url]
 
-> JS implementation of Amazon Mechanical Turk (mturk) API
-
 ## Install
 ```sh
 npm install mturk-api

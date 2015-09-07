@@ -1,16 +1,10 @@
 ////////////////////////////////////////////////////
 //                   Imports
 ////////////////////////////////////////////////////
-var deref = require('json-schema-deref-local');
-var schemas = deref(require('../schemas/API.json'));
-var instantiator = require('json-schema-instantiator');
 var EventEmitter = require("events").EventEmitter;
 var CryptoJS = require('crypto-js');
-var ZSchema = require("z-schema");
 var Promise = require('promise');
-var validator = new ZSchema();
 var soap = require('soap');
-var _ = require('lodash');
 
 var WSDL = 'https://mechanicalturk.amazonaws.com/AWSMechanicalTurk/AWSMechanicalTurkRequester.wsdl';
 var PRODUCTION = 'https://mechanicalturk.amazonaws.com/';
@@ -27,7 +21,7 @@ function MTurkAPI() {
                 if(err){ reject(err) }
                 var endPoint = options.sandbox? SANDBOX : PRODUCTION;
                 client.setEndpoint(endPoint);
-                var operations = _.keys(client.AWSMechanicalTurkRequester.AWSMechanicalTurkRequesterPort);
+                var operations = Object.keys(client.AWSMechanicalTurkRequester.AWSMechanicalTurkRequesterPort);
                 var numOperations = operations.length;
                 var processedOps = 0;
                 var wrapper = {};
@@ -52,10 +46,6 @@ function MTurkAPI() {
     return api;
 }
 
-//EXPORT
-module.exports = new MTurkAPI();
-
-
 
 ///////////////////////////
 //   IMPLEMENTATION
@@ -75,84 +65,16 @@ function wrapClientMethods(client, wrapper, options, operation){
     wrapper[operation] = function(params){
         var params = params || {};
         return new Promise(function(resolve, reject){
-            /////////////////////////////////////////////////////////////
-            // VALIDATE REQUEST /////////////////////////////////////////
-            /////////////////////////////////////////////////////////////
-            var paramSchema = schemas.definitions[operation + 'Request'];
-            //var instance = instantiator.instantiate(paramSchema);
-            validator.validate(params, paramSchema, function (err, valid) {
-                if(err){reject(err)}
-                //params = _.merge(instance, params);
-
-                //////////////////////////////////////////////////////////////////////////////
-                // RESPONSE //////////////////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////////////////////////////
-                if(typeof client[operation] === 'undefined'){reject('Invalid operation: '+operation)}
-                client[operation](getRequestMessage(options, operation, params), function(err, response){
-                    var keys = _.keys(response);
-                    var responseResult = keys[1];
-                    var schema = schemas.definitions[responseResult];
-                    validator.validate(response, schema, function (err, valid) {
-                        if(err){reject(err)}
-                        var result = operation + 'Result';
-                        switch(operation){
-
-                            case 'GetAccountBalance':
-                                var details = response[responseResult][0];
-                            details = details.AvailableBalance;
-                            details.Request = {};
-                            details.Request.IsValid = true;
-                            details.Operation = operation;
-                            resolve(details);
-                            break;
-
-                            case 'CreateQualificationType':
-                                var details = response.QualificationType[0];
-                            if(details.Request.IsValid === "True"){
-                                details.Request.IsValid = true;
-                                details.Operation = operation;
-                                resolve(details);
-                            } else { reject(details.Request.Errors.Error[0])}
-                            break;
-
-                            case 'UpdateQualificationType':
-                                var details = response.QualificationType[0];
-                            if(details.Request.IsValid === "True"){
-                                details.Request.IsValid = true;
-                                details.Operation = operation;
-                                resolve(details);
-                            } else { reject(details.Request.Errors.Error[0]) }
-                            break;
-
-                            case 'GetQualificationType':
-                                var details = response.QualificationType[0];
-                            if(details.Request.IsValid === "True"){
-                                details.Request.IsValid = true;
-                                details.Operation = operation;
-                                resolve(details);
-                            } else { reject(details.Request.Errors.Error[0]) }
-                            break;
-
-                            case 'GetHIT':
-                                var details = response.HIT[0];
-                            if(details.Request.IsValid === "True"){
-                                details.Request.IsValid = true;
-                                details.Operation = operation;
-                                resolve(details);
-                            } else { reject(details.Request.Errors.Error[0]) }
-                            break;
-
-                            default: details = response[result][0];
-                            if(details.Request.IsValid === "True"){
-                                details.Request.IsValid = true;
-                                details.Operation = operation;
-                                resolve(details);
-                            } else { reject(details.Request.Errors.Error[0]) }
-                            break;
-                        };
-                    });
-                });
+            if(typeof client[operation] === 'undefined'){reject('Invalid operation: '+operation)}
+            client[operation](getRequestMessage(options, operation, params), function(err, response){
+                var keys = Object.keys(response);
+                var responseResult = keys[1];
+                var result = operation + 'Result';
+                resolve(response);
             });
         });
-    };
+    }
 }
+
+//EXPORT
+module.exports = new MTurkAPI();

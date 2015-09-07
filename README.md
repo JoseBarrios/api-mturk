@@ -3,11 +3,11 @@
 [![NPM version][npm-image]][npm-url]
 [![Downloads][download-badge]][npm-url]
 
-## Install
+### Install
 ```sh
 npm install mturk-api
 ```
-## Basic usage
+### Basic usage
 ```js
  var mturk = require('mturk-api');
 
@@ -32,7 +32,7 @@ npm install mturk-api
  }).catch(console.error);
 
 ```
-## Supported API Operations
+### Supported API Operations
 Operation  | Required Parameters
 ------------- | -------------
 [ApproveAssignment](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveAssignmentOperation.html) | { **AssignmentId**:String }

@@ -12,38 +12,35 @@ npm install mturk-api
 ## Basic usage
 ```js
  var mturk = require('mturk-api');
- 
+
  var config = {
     access : 'ACCESS_KEY_GOES_HERE',
     secret : 'SECRET_KEY_GOES_HERE',
     sandbox: true
  }
- 
+
  mturk.connect(config).then(function(api){
-   //Example operation
-   api.req('SearchHITs', { PageSize: 20 }).then(handleResponse, handleError);
-   
- }, function(connError){
-   //Handle connection error here
-   console.error(connError);
-   
- });
- 
- function handleResponse(res){
-   //Do something with response
- }
- 
- function handleError(err){
-   //Do something with error
- }
+
+   //Example operation, no params
+   api.req('GetAccountBalance').then(function(response){
+      //Do something
+   });
+
+   //Example operation, with params
+   api.req('SearchHITs', { PageSize: 100 }).then(function(response){
+       //Do something
+   });
+
+ }).catch(console.error);
+
 ```
-## Supports 
-Operation  | Required 
+## Supported API Operations
+Operation  | Required Parameters
 ------------- | -------------
-[ApproveAssignment](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveAssignmentOperation.html) | { **AssignmentId**:String } 
-[ApproveRejectedAssignment](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveRejectedAssignmentOperation.html)   | { **AssignmentId**:String } 
-[AssignQualification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_AssignQualificationOperation.html) | { **QualificationTypeId**:String, **WorkerId**:String } 
-[BlockWorker](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_BlockWorkerOperation.html) | { **WorkerId**:String, **Reason**:String } 
+[ApproveAssignment](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveAssignmentOperation.html) | { **AssignmentId**:String }
+[ApproveRejectedAssignment](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveRejectedAssignmentOperation.html)   | { **AssignmentId**:String }
+[AssignQualification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_AssignQualificationOperation.html) | { **QualificationTypeId**:String, **WorkerId**:String }
+[BlockWorker](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_BlockWorkerOperation.html) | { **WorkerId**:String, **Reason**:String }
 [ChangeHITTypeOfHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ChangeHITTypeOfHITOperation.html) | { **HITId**:String, **HITTypeId**:String}
 [CreateHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateHITOperation.html) | { **Title**:String, **Description**:String, **AssignmentDurationInSeconds**:Number, **LifetimeInSeconds**:Number } OR {**HITTypeId**:String, **LifetimeInSeconds**:Number }
 [CreateQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateQualificationTypeOperation.html) | { **Name**:String, **Description**:String, **QualificationTypeStatus**:String }

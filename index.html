@@ -46,31 +46,28 @@
  }
 
  mturk.connect(config).then(<span class="pl-k">function</span>(<span class="pl-smi">api</span>){
-   <span class="pl-c">//Example operation</span>
-   api.req(<span class="pl-s"><span class="pl-pds">'</span>SearchHITs<span class="pl-pds">'</span></span>, { PageSize<span class="pl-k">:</span> <span class="pl-c1">20</span> }).then(handleResponse, handleError);
 
- }, <span class="pl-k">function</span>(<span class="pl-smi">connError</span>){
-   <span class="pl-c">//Handle connection error here</span>
-   <span class="pl-en">console</span><span class="pl-c1">.error</span>(connError);
+   <span class="pl-c">//Example operation, no params</span>
+   api.req(<span class="pl-s"><span class="pl-pds">'</span>GetAccountBalance<span class="pl-pds">'</span></span>).then(<span class="pl-k">function</span>(<span class="pl-smi">response</span>){
+      <span class="pl-c">//Do something</span>
+   });
 
- });
+   <span class="pl-c">//Example operation, with params</span>
+   api.req(<span class="pl-s"><span class="pl-pds">'</span>SearchHITs<span class="pl-pds">'</span></span>, { PageSize<span class="pl-k">:</span> <span class="pl-c1">100</span> }).then(<span class="pl-k">function</span>(<span class="pl-smi">response</span>){
+       <span class="pl-c">//Do something</span>
+   });
 
- <span class="pl-k">function</span> <span class="pl-en">handleResponse</span>(<span class="pl-smi">res</span>){
-   <span class="pl-c">//Do something with response</span>
- }
-
- <span class="pl-k">function</span> <span class="pl-en">handleError</span>(<span class="pl-smi">err</span>){
-   <span class="pl-c">//Do something with error</span>
- }</pre></div>
+ }).catch(<span class="pl-en">console</span><span class="pl-c1">.error</span>);
+</pre></div>
 
 <h2>
-<a id="supports" class="anchor" href="#supports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supports</h2>
+<a id="supported-api-operations" class="anchor" href="#supported-api-operations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supported API Operations</h2>
 
 <table>
 <thead>
 <tr>
 <th>Operation</th>
-<th>Required</th>
+<th>Required Parameters</th>
 </tr>
 </thead>
 <tbody>

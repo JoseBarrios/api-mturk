@@ -6,7 +6,8 @@ var CryptoJS = require('crypto-js');
 var Promise = require('promise');
 var soap = require('soap');
 
-var WSDL = 'https://mechanicalturk.amazonaws.com/AWSMechanicalTurk/AWSMechanicalTurkRequester.wsdl';
+//var WSDL = 'https://mechanicalturk.amazonaws.com/AWSMechanicalTurk/AWSMechanicalTurkRequester.wsdl';
+var WSDL = './schemas/AWSMechanicalTurkRequester-2014-08-15.wsdl';
 var PRODUCTION = 'https://mechanicalturk.amazonaws.com/';
 var SANDBOX = 'https://mechanicalturk.sandbox.amazonaws.com/';
 var SERVICE = 'AWSMechanicalTurkRequester';

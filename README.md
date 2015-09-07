@@ -85,6 +85,7 @@ Operation  | Required Parameters
 ## License
 
 MIT © [Jose Barrios](http://github.com/JoseBarrios)
+Banner derived from [Cosmin Cuciureanu's](https://www.behance.net/cosminkoz)[BrainUP](https://dribbble.com/shots/1108424-Brainup-Logo-Concept)
 
 [npm-url]: https://npmjs.org/package/mturk-api
 [npm-image]: https://img.shields.io/npm/v/mturk-api.svg?style=flat-square

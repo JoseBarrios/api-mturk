@@ -1,5 +1,5 @@
-var mturk = require('../src/index.js');
-var config = require('./config.js');
+var mturk = require('../index.js');
+var config = require('../config.js');
 var should = require('should');
 var maxTimeout = "10000";
 config.sandbox = true;

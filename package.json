@@ -2,12 +2,6 @@
     "name": "mturk-api",
     "version": "1.0.3",
     "description": "JS implementation of Amazon Mechanical Turk (mturk) API",
-    "main": "./src/index.js",
-    "files": [
-        "bin/",
-        "schemas/",
-        "dist/"
-    ],
     "scripts": {
         "test": " mocha"
     },

@@ -66,6 +66,29 @@ describe('Amazon Mechanical Turk API', function() {
         }).catch(done);
     });
 
+    it('SendTestEventNotification', function(done) {
+
+        this.timeout(maxTimeout)
+        var notification = {
+            Destination: 'z8k5o8o3q0i1n9q8@cognilab.slack.com',
+            Transport: "Email",
+            Version: "2006-05-05",
+            EventType: ["Ping"]
+        }
+        var params = {
+            Notification: notification,
+            TestEventType: ["Ping"]
+        }
+        API.req('SendTestEventNotification', params).then(function(res){
+            //(res.Request.IsValid).should.equal(true);
+            done();
+        }).catch(done);
+    });
+
+
+
+
+
     /*it('XXXX', function(done) {*/
     //api.req('XXXX').then(function(res) {
     //done();

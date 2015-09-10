@@ -1,7 +1,7 @@
 [![NPM version][npm-image]][npm-url]
 [![Downloads][download-badge]][npm-url]
 
-![alt text](http://goo.gl/OAMdoY "Brainup")
+![alt text](http://goo.gl/zbqlsS "Brainup")
 
 ### Install
 ```sh

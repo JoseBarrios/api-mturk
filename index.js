@@ -70,8 +70,15 @@ function wrapClientMethods(client, wrapper, options, operation){
             client[operation](getRequestMessage(options, operation, params), function(err, response){
                 var keys = Object.keys(response);
                 var responseResult = keys[1];
-                var result = operation + 'Result';
-                resolve(response);
+                //Catch response errors:
+                var request = response[responseResult][0].Request;
+                if(request.IsValid === "True"){
+                    resolve(response);
+                } else {
+                    var message = operation+" - "+request.Errors.Error[0].Message;
+                    var error = new Error(message);
+                    reject(error);
+                }
             });
         });
     }

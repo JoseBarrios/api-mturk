@@ -5,6 +5,17 @@ config.sandbox = true;
 
 var API = {};
 
+
+function randomString(size) {
+    var random = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for( var i=0; i < size; i++ ){
+        random += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return random;
+}
+
+
 describe('Amazon Mechanical Turk API', function() {
 
     it('Connection', function(done) {
@@ -12,7 +23,7 @@ describe('Amazon Mechanical Turk API', function() {
         mturk.connect(config).then(function(client) {
             API = client;
             API.WorkerId = "A2Q1RSC9MWUTL2";
-            API.QualificationTypeId = '3PP3A267AB24V2UHPNT7MKM6QSA9QQ';
+            API.HITId = '3G57RS03HHDCF84CT9872BY0GAT52N';
             done();
         }).catch(done);
     });
@@ -20,13 +31,13 @@ describe('Amazon Mechanical Turk API', function() {
 
     it('AssignQualification', function(done) {
         this.timeout(maxTimeout)
-        API.req('CreateQualificationType', { Name:'Qualification Test - 86', Description:'Qualifiation Description', QualificationTypeStatus:'Active' } ).then(function(res){
-            API.QualificationTypeId = res.QualificationTypeId;
+        var params = { Name:'Random qualification '+randomString(10), Description:'Description', QualificationTypeStatus:'Active' }
+        API.req('CreateQualificationType', params).then(function(res){
+            API.QualificationTypeId = res.QualificationType[0].QualificationTypeId;
             API.req('AssignQualification', { QualificationTypeId:API.QualificationTypeId, WorkerId:API.WorkerId }).then(function(res){
-                //(res.Request.IsValid).should.equal(true);
                 done();
                 API.req('DisposeQualificationType', {QualificationTypeId:API.QualificationTypeId} )
-            });
+            }).catch(done);
         }).catch(done);
     });
 
@@ -34,7 +45,6 @@ describe('Amazon Mechanical Turk API', function() {
     it('GetAccountBalance', function(done) {
         this.timeout(maxTimeout)
         API.req('GetAccountBalance').then(function(res) {
-            //(res.Request.IsValid).should.equal(true);
             done();
         }).catch(done);
     });
@@ -43,7 +53,6 @@ describe('Amazon Mechanical Turk API', function() {
     it('SearchHITs', function(done) {
         this.timeout(maxTimeout)
         API.req('SearchHITs').then(function(res) {
-            //(res.Request.IsValid).should.equal(true);
             done();
         }).catch(done);
     });
@@ -52,7 +61,6 @@ describe('Amazon Mechanical Turk API', function() {
     it('GetHIT', function(done) {
         this.timeout(maxTimeout)
         API.req('GetHIT', { HITId:API.HITId } ).then(function(res){
-            //(res.Request.IsValid).should.equal(true);
             done();
         }).catch(done);
     });
@@ -61,7 +69,6 @@ describe('Amazon Mechanical Turk API', function() {
     it('ForceExpireHIT', function(done) {
         this.timeout(maxTimeout)
         API.req('ForceExpireHIT', { HITId:API.HITId }).then(function(res){
-            //(res.Request.IsValid).should.equal(true);
             done();
         }).catch(done);
     });
@@ -80,7 +87,6 @@ describe('Amazon Mechanical Turk API', function() {
             TestEventType: ["Ping"]
         }
         API.req('SendTestEventNotification', params).then(function(res){
-            //(res.Request.IsValid).should.equal(true);
             done();
         }).catch(done);
     });

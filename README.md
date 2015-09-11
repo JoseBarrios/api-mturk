@@ -34,7 +34,7 @@ npm install mturk-api
 ```
 ### Supported API Operations
 Operation  | Required Parameters | Unit test
-------------- | -------------
+------------- | ------------- | --------------
 [ApproveAssignment](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveAssignmentOperation.html) | { **AssignmentId**:String }
 [ApproveRejectedAssignment](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveRejectedAssignmentOperation.html)   | { **AssignmentId**:String }
 [AssignQualification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_AssignQualificationOperation.html) | { **QualificationTypeId**:String, **WorkerId**:String } | ✓

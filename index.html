@@ -22,7 +22,7 @@
       <p><a href="https://npmjs.org/package/mturk-api"><img src="https://img.shields.io/npm/v/mturk-api.svg?style=flat-square" alt="NPM version"></a>
 <a href="https://npmjs.org/package/mturk-api"><img src="http://img.shields.io/npm/dm/mturk-api.svg?style=flat-square" alt="Downloads"></a></p>
 
-<p><img src="http://goo.gl/OAMdoY" alt="alt text" title="Brainup"></p>
+<p><img src="http://goo.gl/zbqlsS" alt="alt text" title="Brainup"></p>
 
 <h3>
 <a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h3>
@@ -63,180 +63,224 @@
 <tr>
 <th>Operation</th>
 <th>Required Parameters</th>
+<th>Unit test</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveAssignmentOperation.html">ApproveAssignment</a></td>
 <td>{ <strong>AssignmentId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ApproveRejectedAssignmentOperation.html">ApproveRejectedAssignment</a></td>
 <td>{ <strong>AssignmentId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_AssignQualificationOperation.html">AssignQualification</a></td>
 <td>{ <strong>QualificationTypeId</strong>:String, <strong>WorkerId</strong>:String }</td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_BlockWorkerOperation.html">BlockWorker</a></td>
 <td>{ <strong>WorkerId</strong>:String, <strong>Reason</strong>:String }</td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ChangeHITTypeOfHITOperation.html">ChangeHITTypeOfHIT</a></td>
 <td>{ <strong>HITId</strong>:String, <strong>HITTypeId</strong>:String}</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateHITOperation.html">CreateHIT</a></td>
 <td>{ <strong>Title</strong>:String, <strong>Description</strong>:String, <strong>AssignmentDurationInSeconds</strong>:Number, <strong>LifetimeInSeconds</strong>:Number } OR {<strong>HITTypeId</strong>:String, <strong>LifetimeInSeconds</strong>:Number }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateQualificationTypeOperation.html">CreateQualificationType</a></td>
 <td>{ <strong>Name</strong>:String, <strong>Description</strong>:String, <strong>QualificationTypeStatus</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisableHITOperation.html">DisableHIT</a></td>
 <td>{ <strong>HITId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisposeHITOperation.html">DisposeHIT</a></td>
 <td>{ <strong>HitId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisposeQualificationTypeOperation.html">DisposeQualificationType</a></td>
 <td>{<strong>QualificationTypeId</strong>:String}</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ExtendHITOperation.html">ExtendHIT</a></td>
 <td>{ <strong>HitId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ForceExpireHITOperation.html">ForceExpireHIT</a></td>
 <td>{ <strong>HitId</strong>:String }</td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetAccountBalanceOperation.html">GetAccountBalance</a></td>
 <td>None</td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetAssignmentOperation.html">GetAssignment</a></td>
 <td>{ <strong>AssignmentId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetAssignmentsForHITOperation.html">GetAssignmentsForHIT</a></td>
 <td>{ <strong>HITId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetBlockedWorkersOperation.html">GetBlockedWorkers</a></td>
 <td><em>None</em></td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetBonusPaymentsOperation.html">GetBonusPayments</a></td>
 <td>{ <strong>HITId</strong>:String } OR { <strong>AssignmentId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetFileUploadURLOperation.html">GetFileUploadURL</a></td>
 <td>{ <strong>AssignmentId</strong>:String, <strong>QuestionIdentifier</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetHITOperation.html">GetHIT</a></td>
 <td>{ <strong>HITId</strong>:String }</td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetHITsForQualificationTypeOperation.html">GetHITsForQualificationType</a></td>
 <td>{ <strong>QualificationTypeId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationsForQualificationTypeOperation.html">GetQualificationsForQualificationType</a></td>
 <td>{ <strong>QualificationTypeId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationRequestsOperation.html">GetQualificationRequests</a></td>
 <td><em>None</em></td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationScoreOperation.html">GetQualificationScore</a></td>
 <td>{  <strong>QualificationTypeId</strong>:String, <strong>SubjectId</strong>:String}</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationTypeOperation.html">GetQualificationType</a></td>
 <td>{  <strong>QualificationTypeId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetRequesterStatisticOperation.html">GetRequesterStatistic</a></td>
 <td>{ <strong>Statistic</strong>:String, <strong>TimePeriod</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetRequesterWorkerStatisticOperation.html">GetRequesterWorkerStatistic</a></td>
 <td>{<strong>Statistic</strong>:String, <strong>WorkerId</strong>:String, <strong>TimePeriod</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetReviewableHITsOperation.html">GetReviewableHITs</a></td>
 <td><em>None</em></td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetReviewResultsForHitOperation.html">GetReviewResultsForHIT</a></td>
 <td>{ <strong>HITId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GrantBonusOperation.html">GrantBonus</a></td>
 <td>{ <strong>WorkerId</strong>:String, <strong>AssignmentId</strong>:String, <strong>BonusAmount</strong>:Object, <strong>Reason</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GrantQualificationOperation.html">GrantQualification</a></td>
 <td>{ <strong>QualificationRequestId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_NotifyWorkersOperation.html">NotifyWorkers</a></td>
 <td>{ <strong>Subject</strong>:String, <strong>MessageText</strong>:String, <strong>WorkerId</strong>:Array}</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RegisterHITTypeOperation.html">RegisterHITType</a></td>
 <td>{ <strong>Title</strong>:String, <strong>Description</strong>:String, <strong>Reward</strong>:Object, <strong>AssignmentDurationInSeconds</strong>:Number }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RejectAssignmentOperation.html">RejectAssignment</a></td>
 <td>{ <strong>AssignmentId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RejectQualificationRequestOperation.html">RejectQualificationRequest</a></td>
 <td>{ <strong>QualificationRequestId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RevokeQualificationOperation.html">RevokeQualification</a></td>
 <td>{ <strong>Subject</strong>:String, <strong>QualificationTypeId</strong>:String, <strong>Reason</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SearchHITsOperation.html">SearchHITs</a></td>
 <td><em>None</em></td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SearchQualificationTypesOperation.html">SearchQualificationTypes</a></td>
 <td>{ <strong>MustBeRequestable</strong>:Boolean }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SendTestEventNotificationOperation.html">SendTestEventNotification</a></td>
 <td>{  <strong>Notification</strong>:Object, <strong>TestEventType</strong>:Object }</td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SetHITAsReviewingOperation.html">SetHITAsReviewing</a></td>
 <td>{ <strong>HITId</strong>:String }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SetHITTypeNotificationOperation.html">SetHITTypeNotification</a></td>
 <td>{ <strong>HITTypeId</strong>:String, <strong>Notification</strong>:Object, }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UnblockWorkerOperation.html">UnblockWorker</a></td>
 <td>{ <strong>WorkerId</strong>:String,  }</td>
+<td>✓</td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UpdateQualificationScoreOperation.html">UpdateQualificationScore</a></td>
 <td>{ <strong>QualificationTypeId</strong>:String, <strong>SubjectId</strong>:String, <strong>IntegerValue</strong>:Number }</td>
+<td></td>
 </tr>
 <tr>
 <td><a href="http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UpdateQualificationTypeOperation.html">UpdateQualificationType</a></td>
 <td>{ <strong>QualificationTypeId</strong>:String }</td>
+<td></td>
 </tr>
 </tbody>
 </table>

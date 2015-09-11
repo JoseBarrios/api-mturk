@@ -71,11 +71,11 @@ function wrapClientMethods(client, wrapper, options, operation){
                 var keys = Object.keys(response);
                 var responseResult = keys[1];
                 //Catch response errors:
-                var request = response[responseResult][0].Request;
-                if(request.IsValid === "True"){
+                var requestMade = response[responseResult][0].Request;
+                if(requestMade.IsValid === "True"){
                     resolve(response);
                 } else {
-                    var message = operation+" - "+request.Errors.Error[0].Message;
+                    var message = operation+" - "+requestMade.Errors.Error[0].Message;
                     var error = new Error(message);
                     reject(error);
                 }

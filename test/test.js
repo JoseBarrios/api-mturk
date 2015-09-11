@@ -49,6 +49,28 @@ describe('Amazon Mechanical Turk API', function() {
         }).catch(done);
     });
 
+    it('BlockWorker', function(done) {
+        this.timeout(maxTimeout)
+        API.req('BlockWorker', {WorkerId:API.WorkerId, Reason:"Testing block operation" }).then(function(res){
+            done();
+        }).catch(done);
+    });
+
+    it('GetBlockedWorkers', function(done) {
+        this.timeout(maxTimeout)
+        API.req('GetBlockedWorkers').then(function(res){
+            done();
+        }).catch(done);
+    });
+
+    it('UnblockWorker', function(done) {
+        this.timeout(maxTimeout)
+        API.req('UnblockWorker', { WorkerId:API.WorkerId }).then(function(res){
+            done();
+        }).catch(done);
+    });
+
+
 
     it('SearchHITs', function(done) {
         this.timeout(maxTimeout)

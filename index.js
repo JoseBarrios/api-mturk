@@ -66,9 +66,11 @@ function wrapClientMethods(client, wrapper, options, operation){
     wrapper[operation] = function(params){
         var params = params || {};
         return new Promise(function(resolve, reject){
-            if(typeof client[operation] === 'undefined'){reject('Invalid operation: '+operation)}
+            if(typeof client[operation] === 'undefined'){return reject('Invalid operation: '+operation)}
             client[operation](getRequestMessage(options, operation, params), function(err, response){
-                if(err){console.error(err);return}
+                if(err) {
+                  return reject(err);
+                }
                 var keys = Object.keys(response);
                 var responseResult = keys[1];
                 //Catch response errors:

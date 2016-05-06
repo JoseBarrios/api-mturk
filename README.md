@@ -32,6 +32,68 @@ npm install mturk-api
  }).catch(console.error);
 
 ```
+
+### Create A HIT
+* Question String
+
+assign the `a_girl_photo_url` to an image url value.
+
+```js
+var _questionString = '<?xml version="1.0"?>\n<HTMLQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2011-11-11/HTMLQuestion.xsd">\n  <HTMLContent><![CDATA[<!DOCTYPE html><html><head><title>HIT</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><script type=\'text/javascript\' src=\'https://s3.amazonaws.com/mturk-public/externalHIT_v1.js\'></script></head><body><form name="mturk_form" method="post" id="mturk_form" action="https://www.mturk.com/mturk/externalSubmit"><input type="hidden" value="" name="assignmentId" id="assignmentId" /><!-- Bootstrap v3.0.3 -->\r\n<link href="https://s3.amazonaws.com/mturk-public/bs30/css/bootstrap.min.css" rel="stylesheet" />\r\n<section class="container" id="Other" style="margin-bottom:15px; padding: 10px 10px; font-family: Verdana, Geneva, sans-serif; color:#333333; font-size:0.9em;">\r\n<div class="row col-xs-12 col-md-12"><!-- Instructions -->\r\n<div class="panel panel-primary">\r\n<div class="panel-heading"><strong> IS the gril in the photo hot? + '</strong></div>\r\n</div>\r\n<!-- Content Body -->\r\n\r\n<section>\r\n<fieldset>\r\n<img alt="" class="image-fixed" src="'
+    + a_girl_photo_url 
+    + '" /><br><div class="left">\r\n<div class="radio"><label><input name="answer" type="radio" value="Yes" />YES</label></div>\r\n</div>\r\n\r\n<div class="right">\r\n<div class="radio"><input name="answer" type="radio" value="NO" /> NO </div>\r\n</div>\r\n</fieldset>\r\n</section>\r\n<!-- End Content Body --></div>\r\n</section>\r\n<!-- close container -->\r\n<style type="text/css">fieldset {\r\n    padding: 10px;\r\n    background: #fbfbfb;\r\n    border-radius: 5px;\r\n    margin-bottom: 5px;\r\n}\r\n\r\n.left {\r\n  float: left;\r\n  display: block;\r\n  padding: 20px;\r\n  width: 49%;\r\n}\r\n\r\n.right {\r\n  float: right;\r\n  display: block;\r\n  padding: 20px;\r\n  width: 49%\r\n}\r\n\r\n.image-fixed {\r\n  max-width: 512px;\r\n  max-height: 200px;\r\n}\r\n</style>\r\n<p class="text-center"><input type="submit" id="submitButton" class="btn btn-primary" value="Submit" /></p></form><script language="Javascript">turkSetAssignmentID();</script></body></html>]]></HTMLContent>\n  <FrameHeight>600</FrameHeight>\n</HTMLQuestion>';';
+```
+
+* HITOption
+
+```js
+var _HITOption = {
+    Title: "Is the girl hot? (WARNING: This HIT may contain adult content. Worker discretion is advised.)"
+    , Keywords: "photo"
+    , Description: "Say Yes or No to the question."
+    , Reward: {Amount: '0.01', CurrencyCode: 'USD', FormattedPrice: '$0.01'}
+    , AssignmentDurationInSeconds: 180 // in 3 minutes
+    , AutoApprovalDelayInSeconds: 28800 // auto approve the worker's anwser and pay to him/her
+    , MaxAssignments: 100 // 100 worker
+    , QualificationRequirement: [
+        {
+            QualificationTypeId: '000000000000000000L0', // HIT Approval Rate %
+            Comparator: 'GreaterThan',
+            IntegerValue: [60],
+            RequiredToPreview: true
+        },
+        {
+            QualificationTypeId: '000000000000000000S0', // HIT Reject Rate %
+            Comparator: 'LessThan',
+            IntegerValue: [10],
+            RequiredToPreview: true
+        },
+        {
+            QualificationTypeId: '00000000000000000060', // Adult Content Qualification
+            Comparator: 'EqualTo',
+            IntegerValue: [1],
+            RequiredToPreview: true
+        }]
+    , Question: _questionString,
+    , LifetimeInSeconds: 86400 * 3 // 3 days
+};
+```
+
+* Create the HIT with the option
+
+```js
+var CreateHIT = function (HITOption, callback) {
+    mturk.connect(config).then(function (api) {
+        api.req('CreateHIT', _HITOption).then(function (response) {
+            callback(null, response.HIT[0]);
+        }, function (err) {
+            callback(err);
+        });
+    }).catch(console.error);
+};
+```
+
+
 ### Supported API Operations
 Operation  | Required Parameters | Unit test
 ------------- | ------------- | --------------

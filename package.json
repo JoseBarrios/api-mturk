@@ -1,6 +1,6 @@
 {
   "name": "mturk-api",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "JS implementation of Amazon Mechanical Turk (mturk) API",
   "scripts": {
     "test": " mocha"

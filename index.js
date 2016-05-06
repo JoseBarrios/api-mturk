@@ -66,19 +66,22 @@ function wrapClientMethods(client, wrapper, options, operation){
     wrapper[operation] = function(params){
         var params = params || {};
         return new Promise(function(resolve, reject){
-            if(typeof client[operation] === 'undefined'){reject('Invalid operation: '+operation)}
+            if(typeof client[operation] === 'undefined'){return reject('Invalid operation: '+operation)}
+
             client[operation](getRequestMessage(options, operation, params), function(err, response){
-                if(err){console.error(err);return}
-                var keys = Object.keys(response),
-                responseResult = keys[0],
-                requestMade = response[responseResult];
+                if(err){ return reject(err) }
+                var keys = Object.keys(response);
+                var responseResult = keys[0];
+                var requestMade = response[responseResult];
                 if(keys[1]){
                     responseResult = keys[1];
                     requestMade = response[responseResult][0].Request;
                 }
+                //Note that we're not comparing to a Boolean, but to a String (which is part of the mturk response)
                 if(requestMade.IsValid === "True"){
                     resolve(response);
-                } else { //Catch response errors:
+                }
+                else { //Catch response errors:
                     var message = operation+" - "+requestMade.Errors.Error[0].Message;
                     var error = new Error(message);
                     reject(error);

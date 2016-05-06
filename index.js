@@ -69,13 +69,16 @@ function wrapClientMethods(client, wrapper, options, operation){
             if(typeof client[operation] === 'undefined'){reject('Invalid operation: '+operation)}
             client[operation](getRequestMessage(options, operation, params), function(err, response){
                 if(err){console.error(err);return}
-                var keys = Object.keys(response);
-                var responseResult = keys[1];
-                //Catch response errors:
-                var requestMade = response[responseResult][0].Request;
+                var keys = Object.keys(response),
+                responseResult = keys[0],
+                requestMade = response[responseResult];
+                if(keys[1]){
+                    responseResult = keys[1];
+                    requestMade = response[responseResult][0].Request;
+                }
                 if(requestMade.IsValid === "True"){
                     resolve(response);
-                } else {
+                } else { //Catch response errors:
                     var message = operation+" - "+requestMade.Errors.Error[0].Message;
                     var error = new Error(message);
                     reject(error);

@@ -23,7 +23,7 @@ var config = {
 //This method is still supported for legacy purposes
 //However, it is being DEPRECATED
 mturk.connect(config).then(function(api){
-  api.req('GetAccountBalance).then(function(res){
+  api.req('GetAccountBalance').then(function(res){
   //... etc
 }).catch(console.error);
 

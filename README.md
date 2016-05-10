@@ -17,16 +17,31 @@ var config = {
     sandbox: true
 }
 
+
+/* 
+v1.3.5 and earlier use a SOAP and WDSL 
+mturk.connect(config).then(function(api){
+  api.req('GetAccountBalance).then(function(res){
+  ... etc
+}).catch(console.error); */
+
+
+// As of v2.0.0 we use REST
 var api = mturk.createClient(config);
+
 
 //Example operation, no params
 api.req('GetAccountBalance').then(function(response){
   //Do something
+}, function(error){
+  //Handle error
 });
 
 //Example operation, with params
-api.req('SearchHITs', { PageSize: 100 }).then(function(response){
+api.req('SearchHITs', { PageSize: 100, PageNumber: 2 }).then(function(response){
    //Do something
+}, function(error){
+  //Handle error
 });
 
 ```

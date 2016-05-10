@@ -50,7 +50,7 @@ api.req('SearchHITs', { PageSize: 100, PageNumber: 2 }).then(function(response){
 
 //Amazon Mechanical Turk limits the velocity of requests.
 //Normally, if you exceed the limit you will receive a
-//503 Service Unavailable error. As of v2.0, our interface 
+//503 Service Unavailable error. As of v2.0, our interface
 //automatically throttles your requests to 3 per second.
 var pageNum = 1;
 var ITERATIONS = 30;
@@ -61,7 +61,7 @@ for(var i=0; i < ITERATIONS; i++){
         if(currPage === ITERATIONS){ done(); }
     }).catch(done);
     pageNum++;
-    
+
 }
 
 

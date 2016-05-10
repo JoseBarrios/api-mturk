@@ -24,7 +24,7 @@ var config = {
 //However, it is being DEPRECATED
 mturk.connect(config).then(function(api){
   api.req('GetAccountBalance).then(function(res){
-  ... etc
+  //... etc
 }).catch(console.error);
 
 

@@ -18,15 +18,17 @@ var config = {
 }
 
 
-/* 
-v1.3.5 and earlier use a SOAP and WDSL 
+
+//v1.3.5 and earlier used SOAP and WDSL
+//This method is still supported for legacy purposes
+//However, it is being DEPRECATED
 mturk.connect(config).then(function(api){
   api.req('GetAccountBalance).then(function(res){
   ... etc
-}).catch(console.error); */
+}).catch(console.error);
 
 
-// As of v2.0.0 we use REST
+// Returns an API client; uses REST via HTTPS
 var api = mturk.createClient(config);
 
 
@@ -37,12 +39,31 @@ api.req('GetAccountBalance').then(function(response){
   //Handle error
 });
 
+
 //Example operation, with params
 api.req('SearchHITs', { PageSize: 100, PageNumber: 2 }).then(function(response){
    //Do something
 }, function(error){
   //Handle error
 });
+
+
+//Amazon Mechanical Turk limits the velocity of requests.
+//Normally, if you exceed the limit you will receive a
+//503 Service Unavailable error. As of v2.0, our API automatically
+//throttles your requests to 3 per second.
+
+var pageNum = 1;
+var ITERATIONS = 30;
+for(var i=0; i < ITERATIONS; i++){
+    api.req('SearchHITs', { PageSize: 100, PageNumber: pageNum }).then(function(response){
+        var currPage = Number(response.SearchHITsResponse.SearchHITsResult[0].PageNumber);
+        if(currPage === ITERATIONS){ done(); }
+    }).catch(done);
+    pageNum++;
+}
+
+
 
 ```
 
@@ -103,7 +124,7 @@ assign the `a_girl_photo_url` to an image url value.
 
 ```js
 var _questionString = '<?xml version="1.0"?>\n<HTMLQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2011-11-11/HTMLQuestion.xsd">\n  <HTMLContent><![CDATA[<!DOCTYPE html><html><head><title>HIT</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><script type=\'text/javascript\' src=\'https://s3.amazonaws.com/mturk-public/externalHIT_v1.js\'></script></head><body><form name="mturk_form" method="post" id="mturk_form" action="https://www.mturk.com/mturk/externalSubmit"><input type="hidden" value="" name="assignmentId" id="assignmentId" /><!-- Bootstrap v3.0.3 -->\r\n<link href="https://s3.amazonaws.com/mturk-public/bs30/css/bootstrap.min.css" rel="stylesheet" />\r\n<section class="container" id="Other" style="margin-bottom:15px; padding: 10px 10px; font-family: Verdana, Geneva, sans-serif; color:#333333; font-size:0.9em;">\r\n<div class="row col-xs-12 col-md-12"><!-- Instructions -->\r\n<div class="panel panel-primary">\r\n<div class="panel-heading"><strong> IS the gril in the photo hot? + '</strong></div>\r\n</div>\r\n<!-- Content Body -->\r\n\r\n<section>\r\n<fieldset>\r\n<img alt="" class="image-fixed" src="'
-    + a_girl_photo_url 
+    + a_girl_photo_url
     + '" /><br><div class="left">\r\n<div class="radio"><label><input name="answer" type="radio" value="Yes" />YES</label></div>\r\n</div>\r\n\r\n<div class="right">\r\n<div class="radio"><input name="answer" type="radio" value="NO" /> NO </div>\r\n</div>\r\n</fieldset>\r\n</section>\r\n<!-- End Content Body --></div>\r\n</section>\r\n<!-- close container -->\r\n<style type="text/css">fieldset {\r\n    padding: 10px;\r\n    background: #fbfbfb;\r\n    border-radius: 5px;\r\n    margin-bottom: 5px;\r\n}\r\n\r\n.left {\r\n  float: left;\r\n  display: block;\r\n  padding: 20px;\r\n  width: 49%;\r\n}\r\n\r\n.right {\r\n  float: right;\r\n  display: block;\r\n  padding: 20px;\r\n  width: 49%\r\n}\r\n\r\n.image-fixed {\r\n  max-width: 512px;\r\n  max-height: 200px;\r\n}\r\n</style>\r\n<p class="text-center"><input type="submit" id="submitButton" class="btn btn-primary" value="Submit" /></p></form><script language="Javascript">turkSetAssignmentID();</script></body></html>]]></HTMLContent>\n  <FrameHeight>600</FrameHeight>\n</HTMLQuestion>';';
 ```
 

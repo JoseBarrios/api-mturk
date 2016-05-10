@@ -1,10 +1,9 @@
 var mturk = require('../index.js');
 var config = require('../config.js');
-var maxTimeout = "10000";
+var maxTimeout = 10000;
+var SLOW_RESPONSE = 1000;
 config.sandbox = true;
-var validator = require('../validateMTurkResponse.js');
 
-var api = mturk.createClient(config);
 
 //These variables are assign as we move through the tests
 var workerId = "A2Q1RSC9MWUTL2";
@@ -13,10 +12,14 @@ var HITId = null;
 var HITTypeId = null;
 var assignmentId = null;
 
+//2.0 CLIENT
+var api = mturk.createClient(config);
 
 describe('Amazon Mechanical Turk API', function() {
 
+
     it('SearchHITs', function(done) {
+        this.slow(SLOW_RESPONSE);
         this.timeout(maxTimeout)
         var params = {PageSize: 1}
         api.req('SearchHITs', params).then(function(res){
@@ -26,6 +29,7 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
     it('CreateQualificationType', function(done) {
+        this.slow(SLOW_RESPONSE);
         this.timeout(maxTimeout)
         var params = { Name:'SANDBOX_QUALIFICATION', Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', QualificationTypeStatus:'Active' }
         api.req('CreateQualificationType', params).then(function(res){
@@ -34,24 +38,8 @@ describe('Amazon Mechanical Turk API', function() {
         }).catch(done);
     });
 
-
-
-    it('AssignQualification', function(done) {
-        this.timeout(maxTimeout)
-        api.req('AssignQualification', { QualificationTypeId: qualificationTypeId, WorkerId:workerId }).then(function(res){
-            done();
-        }).catch(done);
-    });
-
-
-    it('DisposeQualificationType', function(done){
-        api.req('DisposeQualificationType',{QualificationTypeId : qualificationTypeId}).then(function(res){
-            done();
-        }).catch(done);
-    })
-
-
     it('GetAccountBalance', function(done) {
+        this.slow(SLOW_RESPONSE);
         this.timeout(maxTimeout)
         api.req('GetAccountBalance').then(function(res) {
             done();
@@ -59,6 +47,7 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
     it('BlockWorker', function(done) {
+        this.slow(SLOW_RESPONSE);
         this.timeout(maxTimeout)
         api.req('BlockWorker', {WorkerId:workerId, Reason:"Testing block operation" }).then(function(res){
             done();
@@ -66,6 +55,7 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
     it('GetBlockedWorkers', function(done) {
+        this.slow(SLOW_RESPONSE);
         this.timeout(maxTimeout)
         api.req('GetBlockedWorkers').then(function(res){
             done();
@@ -73,14 +63,25 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
     it('UnblockWorker', function(done) {
+        this.slow(SLOW_RESPONSE);
         this.timeout(maxTimeout)
         api.req('UnblockWorker', { WorkerId:workerId }).then(function(res){
             done();
         }).catch(done);
     });
 
+    it('AssignQualification', function(done) {
+        this.slow(SLOW_RESPONSE);
+        this.timeout(maxTimeout)
+        api.req('AssignQualification', { QualificationTypeId: qualificationTypeId, WorkerId:workerId }).then(function(res){
+            done();
+        }).catch(done);
+    });
+
+
 
     it('GetHIT', function(done) {
+        this.slow(SLOW_RESPONSE);
         this.timeout(maxTimeout)
         api.req('GetHIT', { HITId:HITId } ).then(function(res){
             done();
@@ -88,7 +89,17 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
 
+    it('DisposeQualificationType', function(done){
+        this.slow(SLOW_RESPONSE);
+        api.req('DisposeQualificationType',{QualificationTypeId : qualificationTypeId}).then(function(res){
+            done();
+        }).catch(done);
+    })
+
+
+
     it('ForceExpireHIT', function(done) {
+        this.slow(SLOW_RESPONSE);
         this.timeout(maxTimeout)
         api.req('ForceExpireHIT', { HITId:HITId }).then(function(res){
             done();
@@ -96,34 +107,99 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
 
-    /*    it('SendTestEventNotification', function(done) {*/
+    //REQUIIRES AMAZON SQS SERVICE (AND SETUP)
+    //DONT FORGET TO REMOVE 'SKIP' TO ENABLE THE TEST
+    //IF YOU ARE A CONTRIBUTOR, DONT FORGET TO
+    //REMOVE YOUR HOOK AND/OR CREDENTIALS BEFORE
+    //PUSHING TO THE REPO
+    it.skip('SendTestEventNotification', function(done) {
+        this.timeout(maxTimeout)
+        this.slow(SLOW_RESPONSE);
 
-    //this.timeout(maxTimeout)
-    //var notification = {
-    //Destination: 'z8k5o8o3q0i1n9q8@cognilab.slack.com',
-    //Transport: "Email",
-    //Version: "2006-05-05",
-    //EventType: ["Ping"]
-    //}
-    //var params = {
-    //Notification: notification,
-    //TestEventType: ["Ping"]
-    //}
-    //api.req('SendTestEventNotification', params).then(function(res){
-    //done();
-    //}).catch(done);
-    //});
+        var warning = new Error('Notification services require setup (on your end). See test file for details.')
+        done(warning);
+
+        var notification = {
+            Destination: 'YOU NEED TO FILL THIS OUT',
+            Transport: "EMAIL OR SQS MESSAGE",
+            Version: "2006-05-05",
+            EventType: ["Ping"]
+        }
+
+        var params = {
+            Notification: notification,
+            TestEventType: ["Ping"]
+        }
+
+        api.req('SendTestEventNotification', params).then(function(res){
+            done();
+        }).catch(done)
 
 
-
-
-
-    /*it('XXXX', function(done) {*/
-    //api.req('XXXX').then(function(res) {
-    //done();
-    //}, done);
-    //});
+    });
 });
+
+
+///////////////////////
+//LEGACY SUPPORT CHECKS
+///////////////////////
+describe('Testing throttling (give it a few secs)', function() {
+
+    //Slows down requests to keep them under the allowed limits
+    it('Request throttling', function(done) {
+        //Allow for extra time
+        this.timeout(20000);
+        this.slow(20000);
+
+        var MAX_ITERATIONS = 30;
+        var pageNum = 1;
+        for(var i=0; i < MAX_ITERATIONS; i++){
+            api.req('SearchHITs', { PageSize: 100, PageNumber: pageNum }).then(function(response){
+                var currPage = Number(response.SearchHITsResponse.SearchHITsResult[0].PageNumber);
+                if(currPage === MAX_ITERATIONS){ done(); }
+            }).catch(done);
+            pageNum++;
+        }
+    })
+
+    //MORE TO COME
+
+});
+
+
+///////////////////////
+//LEGACY SUPPORT CHECKS
+///////////////////////
+describe('Legacy support checks', function() {
+
+
+    //COVERS 1.0.0 to 1.3.5
+    it('v1.0 Compatibility', function(done) {
+        this.timeout(maxTimeout)
+        this.slow(SLOW_RESPONSE);
+        var params = {PageSize: 1}
+        //1.0 CLIENT METHODS
+        mturk.connect(config).then(function(legacy){
+            legacy.req('SearchHITs', params).then(function(res){
+                done();
+            }).catch(done);
+        }).catch(done)
+    });
+
+
+    //MORE TO COME
+
+});
+
+
+
+
+
+/*it('XXXX', function(done) {*/
+//api.req('XXXX').then(function(res) {
+//done();
+//}, done);
+//});
 
 
 //var pipe = {};
@@ -186,22 +262,8 @@ describe('Amazon Mechanical Turk API', function() {
 //console.error(connError);
 //});
 
-function handleResponse(res){
 
-    describe('MTURK API', function () {
-        describe(res.Operation, function () {
-            it('should correctly add one to the given number', function () {
-                assert.typeOf(foo, 'string'); // without optional message
-            })
-            it('should correctly add one to the given number', function () {
-                assert.lengthOf(beverages.tea, 3, 'beverages has 3 types of tea');
-            })
-        });
-    })
-}
-
-
-function handleError(err){
-    //Do something with error
-    console.error('---------------------- ERROR', err);
-}
+//function handleError(err){
+////Do something with error
+//console.error('---------------------- ERROR', err);
+//}

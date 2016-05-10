@@ -19,6 +19,9 @@ specialResponses['CreateQualificationType'] = 'QualificationType';
 specialResponses['CreateHIT'] = 'HIT';
 specialResponses['GetHIT'] = 'HIT';
 
+//Legacy support
+var npmPackageVersion = 2; //Latest by default
+
 var promiseThrottle = new PromiseThrottle({
     requestsPerSecond: 3,           // up to 1 request per second
     promiseImplementation: Promise  // the Promise library you are using
@@ -29,6 +32,18 @@ var promiseThrottle = new PromiseThrottle({
 function MTurkAPI() {
 
     var api = this;
+
+    //Legacy support for V1 methods (temporary)
+    api.connect = function(options){
+        return new Promise(function(resolve, reject){
+            var client = api.createClient(options);
+            var error = new Error('Could not initialize client. Please notify the mantainer (ERR1-3-5L)');
+            if(client){
+                resolve(client);
+                npmPackageVersion = 1;
+            } else { reject(error); }
+        })
+    };
 
     api.createClient = function(options) {
 
@@ -42,6 +57,12 @@ function MTurkAPI() {
             })
         };
 
+        //TODO: Improve method by using JSON schemas
+        //      for error checking
+
+        //Checks for two types of errors:
+        //OPERATION ERR: (wrong API keys, etc) which are located in the OPERATION response group
+        //RESULTS ERR: (wrong params, etc) which are located in the RESULT response group
         client.isValidResponse = function(response){
             var result = {};
             result.errorType =  [];
@@ -52,7 +73,7 @@ function MTurkAPI() {
             var charIndex = responseKey.indexOf("Response");
             var operationName = responseKey.slice(0, charIndex)
 
-            //Check for operation request errors
+            //OPERATION ERROR CHECK
             var responseProperty = operationName + 'Response';
             var hasResponse = response.hasOwnProperty(responseProperty);
             var responseGroup = hasResponse? response[operationName + 'Response'] : null;
@@ -70,7 +91,7 @@ function MTurkAPI() {
             if(error){return result}
 
 
-            //Check for result errors
+            //RESULT ERROR CHECK
             var specialCase = specialResponses.hasOwnProperty(operationName);
             var resultProperty = specialCase ? specialResponses[operationName] : operationName + 'Result';
             var hasResult = responseGroup.hasOwnProperty(resultProperty);
@@ -86,6 +107,10 @@ function MTurkAPI() {
             var errData = errKey && errVal? errKey +': '+errVal : '';
             result.errorMessage = error? errCode +' - '+ errMsg + ' - '+ errData : '';
             result.isValid = error? false : true;
+
+            //Returns object
+            // with various props
+            // isValid, errMessage, etc
             return result;
         }
 
@@ -129,9 +154,14 @@ function throttledRequest(client, options, operation, params){
 
             res.on('end', function(){
                 var xmlString = xmlBuffer.toString('utf-8');
-                convertXMLToJSON(xmlString).then(function(JSONResponse){
-                    var test = client.isValidResponse(JSONResponse);
-                    test.isValid? resolve(JSONResponse) : reject(new Error(test.errorMessage))
+                convertXMLToJSObject(xmlString).then(function(response){
+                    var test = client.isValidResponse(response);
+                    if(test.isValid){
+                        response = formatResponse(npmPackageVersion, response)
+                        resolve(response);
+                    } else {
+                        reject(new Error(test.errorMessage))
+                    }
                 }).catch(reject);
             })
 
@@ -143,8 +173,19 @@ function throttledRequest(client, options, operation, params){
     })
 };
 
+function formatResponse(version, res){
+    switch( version ){
+        case 1:
+            var keys = Object.keys(res);
+            var rootKey = keys[0];
+            return res[rootKey];
+            break;
+        default:
+            return res;
+    }
+}
 
-function convertXMLToJSON(xml){
+function convertXMLToJSObject(xml){
     return new Promise(function(resolve, reject){
         parseXML(xml, function (err, response) {
             err? reject(err) : resolve(response);

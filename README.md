@@ -19,12 +19,12 @@ var config = {
 
 
 
-//v1.3.5 and earlier used SOAP and WDSL
-//This method is still supported for legacy purposes
-//However, it is being DEPRECATED
+//DEPRECATION NOTICE: please use mturk.createClient() instead
+//the connect method will no longer be supported in v3.0
 mturk.connect(config).then(function(api){
   api.req('GetAccountBalance').then(function(res){
-  //... etc
+    //Do something
+  }).catch(console.error);
 }).catch(console.error);
 
 

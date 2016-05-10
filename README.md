@@ -50,17 +50,18 @@ api.req('SearchHITs', { PageSize: 100, PageNumber: 2 }).then(function(response){
 
 //Amazon Mechanical Turk limits the velocity of requests.
 //Normally, if you exceed the limit you will receive a
-//503 Service Unavailable error. As of v2.0, our API automatically
-//throttles your requests to 3 per second.
-
+//503 Service Unavailable error. As of v2.0, our interface 
+//automatically throttles your requests to 3 per second.
 var pageNum = 1;
 var ITERATIONS = 30;
 for(var i=0; i < ITERATIONS; i++){
+    //These requests will be queued and executed at a rate of 3 per second
     api.req('SearchHITs', { PageSize: 100, PageNumber: pageNum }).then(function(response){
         var currPage = Number(response.SearchHITsResponse.SearchHITsResult[0].PageNumber);
         if(currPage === ITERATIONS){ done(); }
     }).catch(done);
     pageNum++;
+    
 }
 
 
@@ -79,10 +80,10 @@ Operation  | Required Parameters | Unit test
 [BlockWorker](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_BlockWorkerOperation.html) | { **WorkerId**:String, **Reason**:String } | ✓
 [ChangeHITTypeOfHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ChangeHITTypeOfHITOperation.html) | { **HITId**:String, **HITTypeId**:String}
 [CreateHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateHITOperation.html) | { **Title**:String, **Description**:String, **AssignmentDurationInSeconds**:Number, **LifetimeInSeconds**:Number } OR {**HITTypeId**:String, **LifetimeInSeconds**:Number }
-[CreateQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateQualificationTypeOperation.html) | { **Name**:String, **Description**:String, **QualificationTypeStatus**:String }
+[CreateQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateQualificationTypeOperation.html) | { **Name**:String, **Description**:String, **QualificationTypeStatus**:String } | ✓
 [DisableHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisableHITOperation.html) | { **HITId**:String }
 [DisposeHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisposeHITOperation.html) | { **HITId**:String }
-[DisposeQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisposeQualificationTypeOperation.html) | {**QualificationTypeId**:String}
+[DisposeQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisposeQualificationTypeOperation.html) | {**QualificationTypeId**:String} | ✓
 [ExtendHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ExtendHITOperation.html) | { **HITId**:String }
 [ForceExpireHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ForceExpireHITOperation.html) | { **HITId**:String } | ✓
 [GetAccountBalance](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetAccountBalanceOperation.html) | None | ✓

@@ -87,8 +87,12 @@ function MTurkAPI() {
             var errKey = error && error.hasOwnProperty('Data')? error.Data[0].Key : '';
             var errVal = error && error.hasOwnProperty('Data')? error.Data[0].Value : '';
             var errData = errKey && errVal? errKey +': '+errVal : '';
-            result.errorMessage = error? errCode +' - '+ errMsg + ' - '+ errData: '';
+            result.errMessage = error? errCode +' - '+ errMsg + ' - '+ errData: '';
             result.isValid = error? false : true;
+            result.errData = errData;
+            result.errVal = errVal[0];
+            result.errKey = errKey[0];
+            result.errCode = errCode;
             if(error){return result}
 
 
@@ -106,9 +110,12 @@ function MTurkAPI() {
             var errKey = error && error.hasOwnProperty('Data')? error.Data[0].Key : '';
             var errVal = error && error.hasOwnProperty('Data')? error.Data[0].Value : '';
             var errData = errKey && errVal? errKey +': '+errVal : '';
-            result.errorMessage = error? errCode +' - '+ errMsg + ' - '+ errData : '';
+            result.errMessage = error? errCode +' - '+ errMsg + ' - '+ errData : '';
             result.isValid = error? false : true;
-
+            result.errData = errData;
+            result.errVal = errVal[0];
+            result.errKey = errKey[0];
+            result.errCode = errCode;
             //Returns object
             // with various props
             // isValid, errMessage, etc
@@ -183,7 +190,10 @@ function throttledRequest(client, options, operation, params){
                         response = formatResponse(npmPackageVersion, response)
                         resolve(response);
                     } else {
-                        reject(new Error(test.errorMessage))
+                        var customError = new Error();
+                        customError.name = test.errVal;
+                        customError.message = test.errMessage;
+                        reject(new Error(customError))
                     }
                 }).catch(reject);
             })

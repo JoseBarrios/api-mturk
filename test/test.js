@@ -3,7 +3,7 @@ var config = require('../config.js');
 var maxTimeout = 10000;
 var SLOW_RESPONSE = 1000;
 config.sandbox = true;
-
+var fs = require('fs');
 
 //These variables are assign as we move through the tests
 var workerId = "A2Q1RSC9MWUTL2";
@@ -16,6 +16,27 @@ var assignmentId = null;
 var api = mturk.createClient(config);
 
 describe('Amazon Mechanical Turk API', function() {
+
+    it('CreateHIT', function(done) {
+        fs.readFile('./templates/bonusHIT.xml', 'utf8', function(err, data){
+            if(err){console.error(err);return}
+            var params = {
+                Title: "RANDOM HIT"+Math.random(0,10000000000),
+                Keywords: "test, HIT",
+                Description: "Answer the questions on the screen",
+                AssignmentDurationInSeconds: 180, // in 3 minutes
+                AutoApprovalDelayInSeconds: 0, // auto approve the worker's anwser and pay to him/her
+                MaxAssignments: 1, // 100 worker
+                Question: data,
+                LifetimeInSeconds: 86400 * 3, // 3 days
+                Reward: {CurrencyCode:'USD', Amount:0.01}
+            };
+
+            api.req('CreateHIT', params).then(function(res){
+                done()
+            }).catch(done);
+        });
+    });
 
 
     it('SearchHITs', function(done) {
@@ -91,6 +112,7 @@ describe('Amazon Mechanical Turk API', function() {
 
     it('DisposeQualificationType', function(done){
         this.slow(SLOW_RESPONSE);
+        //var qualificationTypeId = '370ZSYUPB7JCOKNIVOQSWYOOB5VTLF'
         api.req('DisposeQualificationType',{QualificationTypeId : qualificationTypeId}).then(function(res){
             done();
         }).catch(done);

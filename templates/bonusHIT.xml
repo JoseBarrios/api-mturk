@@ -1,0 +1,85 @@
+<HTMLQuestion xmlns='http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2011-11-11/HTMLQuestion.xsd'>
+    <HTMLContent><![CDATA[
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+                <link rel='stylesheet' type='text/css' href='https://s3.amazonaws.com/mturk-public/bs30/css/bootstrap.min.css'>
+                </head>
+                <body>
+                    <form name='mturk_form' method='post' id='mturk_form' action='https://www.mturk.com/mturk/externalSubmit'>
+                        <input type='hidden' value='' name='assignmentId' id='assignmentId'/>
+
+
+                        <div class="row">
+                            <h3 style="text-align:center; padding-top:10px; padding-bottom:44px">Compensation HIT </h3>
+                        </div>
+
+
+                        <div class="row">
+
+                            <fieldset class="col-md-6 col-md-offset-3" style="text-align:center">
+                                <p class="center-block" style="padding-bottom:10px">From 1-10, how satisfied were you with how the support staff resolved your most recent problem?</p>
+                                <label style='margin-right:44px'>1<br><input type='radio' name='satisfaction' value='1'></label>
+                                <label style='margin-right:44px'>2<br><input type='radio' name='satisfaction' value='2'> </label>
+                                <label style='margin-right:44px'>3<br><input type='radio' name='satisfaction' value='3'> </label>
+                                <label style='margin-right:44px'>4<br><input type='radio' name='satisfaction' value='4'> </label>
+                                <label style='margin-right:44px'>5<br><input type='radio' name='satisfaction' value='5'> </label>
+                                <label style='margin-right:44px'>6<br><input type='radio' name='satisfaction' value='6'> </label>
+                                <label style='margin-right:44px'>7<br><input type='radio' name='satisfaction' value='7'> </label>
+                                <label style='margin-right:44px'>8<br><input type='radio' name='satisfaction' value='8'> </label>
+                                <label style='margin-right:44px'>9<br><input type='radio' name='satisfaction' value='9'> </label>
+                                <label style='margin-right:44px'>10<br> <input type='radio' name='satisfaction' value='10'> </label>
+                            </fieldset>
+
+
+                            <fieldset class="col-md-6 col-md-offset-3" style="text-align:center; padding-top:44px; padding-bottom:10px">
+                            <p style="text-align:left">Additional comments</p>
+                            <p><textarea name='feedback' style="width:100%" rows='4' value=''></textarea></p>
+                            </fieldset>
+
+                            <fieldset class="col-md-6 col-md-offset-3" style="text-align:center">
+                            <button class="btn btn-success" type='submit' id='submitButton' value='Submit'>Submit</button>
+                            </fieldset>
+
+                            <input id='browser' name='browser' value=''>
+                            <input id='browser_version' name='browser_version' value=''>
+                            <input id='engine' name='engine' value=''>
+                            <input id='engine_version' name='engine_version' value=''>
+                            <input id='os' name='os' value=''>
+                            <input id='os_version' name='os_version' value=''>
+                            <input id='device_vendor' name='device_vendor' value=''>
+                            <input id='device_model' name='device_model' value=''>
+                            <input id='device_type' name='device_type' value=''>
+                            <input id='cpu' name='cpu' value=''>
+
+                        </div>
+                    </form>
+
+                    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/UAParser.js/0.7.10/ua-parser.min.js'></script>
+                    <script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
+                    <script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/ie.js'></script>
+                    <script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/cat.1.js'></script>
+                    <script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/bs30/js/bootstrap.min.js'></script>
+                    <script language='Javascript'>turkSetAssignmentID();</script>
+                    <script language='Javascript'>
+                        var parser = new UAParser();
+                        var agent = parser.getResult();
+                        document.getElementById('browser').value = agent.browser.name || null;
+                        document.getElementById('browser_version').value = agent.browser.version || null;
+                        document.getElementById('engine').value = agent.engine.name || null;
+                        document.getElementById('engine_version').value = agent.engine.version || null;
+                        document.getElementById('os').value = agent.os.name || null;
+                        document.getElementById('os_version').value = agent.os.version || null;
+                        document.getElementById('device_model').value = agent.device.model || null;
+                        document.getElementById('device_vendor').value = agent.device.vendor || null;
+                        document.getElementById('device_type').value = agent.device.type || null;
+                        document.getElementById('cpu').value = agent.cpu.architecture || null;
+
+                    </script>
+                </body>
+            </html>
+            ]]>
+        </HTMLContent>
+    <FrameHeight>450</FrameHeight>
+</HTMLQuestion>

@@ -7,6 +7,7 @@ var querystring = require('querystring');
 var CryptoJS = require('crypto-js');
 var Promise = require('promise');
 const https = require('https');
+var _ = require('lodash');
 
 var PRODUCTION = 'mechanicalturk.amazonaws.com';
 var SANDBOX = 'mechanicalturk.sandbox.amazonaws.com';
@@ -120,10 +121,32 @@ function MTurkAPI() {
     return api;
 }
 
+function restify(params){
+    _.forOwn(params, function(value, key, obj) {
+
+        if(_.isArray(value)){
+            _.forEach(value, function(item, index){
+                _.forEach(item, function(value, subkey){
+                    params[key+'.'+index+'.'+subkey] = value;
+                });
+            });
+        }
+
+        if(_.isPlainObject(value)){
+            var subkeys = _.keys(value);
+            _.forEach(subkeys, function(subkey){
+                var path = key +'.1.'+subkey;
+                params[path] = value[subkey];
+            })
+        }
+    });
+    return params;
+}
 
 
 function throttledRequest(client, options, operation, params){
     var params = params || {};
+    params = restify(params);
     params.RequestGroup = params.RequestGroup || 'Request, Minimal';
     params.Operation = operation;
     params.Version = VERSION;

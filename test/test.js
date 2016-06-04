@@ -15,6 +15,12 @@ var assignmentId = null;
 //2.0 CLIENT
 var api = mturk.createClient(config);
 
+api.req('DisposeQualifiationType', {QualificationTypeId: '3KSLMSKXULW8BPXYMRPGAKTWHXZLM6'})
+.then(function(res){console.log(res)})
+
+
+
+
 describe('Amazon Mechanical Turk API', function() {
 
     it('CreateHIT', function(done) {
@@ -56,7 +62,9 @@ describe('Amazon Mechanical Turk API', function() {
         api.req('CreateQualificationType', params).then(function(res){
             qualificationTypeId = res.CreateQualificationTypeResponse.QualificationType[0].QualificationTypeId[0];
             done();
-        }).catch(done);
+        }, function(err){
+            console.log('QUAL TYPE', typeof err.toString(), err.toString(), typeof err.message, err.message);
+        });
     });
 
     it('GetAccountBalance', function(done) {

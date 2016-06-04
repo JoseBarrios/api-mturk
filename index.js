@@ -86,7 +86,7 @@ function MTurkAPI() {
             var errMsg = error? error.Message[0] : '';
             var errKey = error && error.hasOwnProperty('Data')? error.Data[0].Key : '';
             var errVal = error && error.hasOwnProperty('Data')? error.Data[0].Value : '';
-            var errData = errKey && errVal? errKey +': '+errVal : '';
+            var errData = errKey && errVal? errKey +':'+errVal : '';
             result.errMessage = error? errCode +' - '+ errMsg + ' - '+ errData: '';
             result.isValid = error? false : true;
             result.errData = errData;
@@ -109,7 +109,7 @@ function MTurkAPI() {
             var errMsg = error? error.Message[0] : '';
             var errKey = error && error.hasOwnProperty('Data')? error.Data[0].Key : '';
             var errVal = error && error.hasOwnProperty('Data')? error.Data[0].Value : '';
-            var errData = errKey && errVal? errKey +': '+errVal : '';
+            var errData = errKey && errVal? errKey +':'+errVal : '';
             result.errMessage = error? errCode +' - '+ errMsg + ' - '+ errData : '';
             result.isValid = error? false : true;
             result.errData = errData;
@@ -191,7 +191,6 @@ function throttledRequest(client, options, operation, params){
                         resolve(response);
                     } else {
                         var customError = new Error();
-                        customError.name = test.errVal;
                         customError.message = test.errMessage;
                         reject(new Error(customError))
                     }

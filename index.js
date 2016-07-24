@@ -2,236 +2,126 @@
 //                   Imports
 ////////////////////////////////////////////////////
 var PromiseThrottle = require('promise-throttle');
-var parseXML = require('xml2js').parseString;
-var querystring = require('querystring');
+var EventEmitter = require("events").EventEmitter;
 var CryptoJS = require('crypto-js');
-var Promise = require('promise');
-const https = require('https');
-var _ = require('lodash');
+var soap = require('soap');
+var _ = require('lodash')
 
-var PRODUCTION = 'mechanicalturk.amazonaws.com';
-var SANDBOX = 'mechanicalturk.sandbox.amazonaws.com';
+//var WSDL = 'https://mechanicalturk.amazonaws.com/AWSMechanicalTurk/AWSMechanicalTurkRequester.wsdl';
+var WSDL = __dirname + '/schemas/AWSMechanicalTurkRequester-2014-08-15.wsdl';
+var PRODUCTION = 'https://mechanicalturk.amazonaws.com/';
+var SANDBOX = 'https://mechanicalturk.sandbox.amazonaws.com/';
 var SERVICE = 'AWSMechanicalTurkRequester';
-var VERSION = '2014-08-15';
-var METHOD = 'POST';
 
-var specialResponses = {};
-specialResponses['CreateQualificationType'] = 'QualificationType';
-specialResponses['CreateHIT'] = 'HIT';
-specialResponses['GetHIT'] = 'HIT';
-
-//Legacy support
-var npmPackageVersion = 2; //Latest by default
-
-var promiseThrottle = new PromiseThrottle({
+//Throttles client requests to a  rate-limited 3 request per second,  makes sure mturk does not return
+//503 errors when it is overwhealmed by multiple simultaneous requests (by requests in a for loop, for example)
+var requestQueue = new PromiseThrottle({
     requestsPerSecond: 3,           // up to 1 request per second
     promiseImplementation: Promise  // the Promise library you are using
 });
 
-
-
 function MTurkAPI() {
 
-    var api = this;
+    var mturk = this;
 
-    //Legacy support for V1 methods (temporary)
-    api.connect = function(options){
-        return new Promise(function(resolve, reject){
-            var client = api.createClient(options);
-            var error = new Error('Could not initialize client. Please notify the mantainer (ERR1-3-5L)');
-            if(client){
-                resolve(client);
-                npmPackageVersion = 1;
-            } else { reject(error); }
+    mturk.createClient = mturk.connect = function(config) { return new Promise(function(resolve, reject){
+
+        soap.createClient(WSDL, function(err, SOAPClient) {
+            //Check that the SOAP client was created propery
+            if(err){ console.error(err); return reject(err) }
+            //Configure client
+            var endPoint = config.sandbox? SANDBOX : PRODUCTION;
+            SOAPClient.setEndpoint(endPoint);
+
+            //Get all the operations from the WSDL description
+            var operations = Object.keys(SOAPClient.AWSMechanicalTurkRequester.AWSMechanicalTurkRequesterPort);
+            var numOperations = operations.length;
+
+            //Build an API based on the client, config and WSDL description
+            var api = buildAPI(SOAPClient, config, operations);
+
+            //Main interface method
+            api.req = function(operation, params) {
+                var params = params || {};
+                return new Promise(function(resolve, reject){
+                    requestQueue.add(request.bind(this, api, operation, params)).then(resolve).catch(reject);
+                })
+            };
+
+            resolve(api);
         })
-    };
+    })};
 
-    api.createClient = function(options) {
-
-        var client = {};
-        // add some items to the queue
-        client.req = function (operation, params) {
-            return new Promise(function(resolve, reject){
-                promiseThrottle.add(throttledRequest.bind(this, client, options, operation, params))
-                .then(resolve)
-                .catch(reject);
-            })
-        };
-
-        //TODO: Improve method by using JSON schemas
-        //      for error checking
-
-        //Checks for two types of errors:
-        //OPERATION ERR: (wrong API keys, etc) which are located in the OPERATION response group
-        //RESULTS ERR: (wrong params, etc) which are located in the RESULT response group
-        client.isValidResponse = function(response){
-            var result = {};
-            result.errorType =  [];
-            result.errorMessage = null;
-            result.isValid = null;
-
-            var responseKey = Object.keys(response)[0];
-            var charIndex = responseKey.indexOf("Response");
-            var operationName = responseKey.slice(0, charIndex)
-
-            //OPERATION ERROR CHECK
-            var responseProperty = operationName + 'Response';
-            var hasResponse = response.hasOwnProperty(responseProperty);
-            var responseGroup = hasResponse? response[operationName + 'Response'] : null;
-            var operationRequest = responseGroup? responseGroup.OperationRequest[0] : null;
-            var operationErrors = operationRequest? operationRequest.hasOwnProperty('Errors') : null;
-            var operationError = operationErrors? true : false;
-            var error = operationError? operationRequest.Errors[0].Error[0]: null;
-            var errCode = error? error.Code[0] : '';
-            var errMsg = error? error.Message[0] : '';
-            var errKey = error && error.hasOwnProperty('Data')? error.Data[0].Key : '';
-            var errVal = error && error.hasOwnProperty('Data')? error.Data[0].Value : '';
-            var errData = errKey && errVal? errKey +':'+errVal : '';
-            result.errMessage = error? errCode +' - '+ errMsg + ' - '+ errData: '';
-            result.isValid = error? false : true;
-            result.errData = errData;
-            result.errVal = errVal[0];
-            result.errKey = errKey[0];
-            result.errCode = errCode;
-            if(error){return result}
-
-
-            //RESULT ERROR CHECK
-            var specialCase = specialResponses.hasOwnProperty(operationName);
-            var resultProperty = specialCase ? specialResponses[operationName] : operationName + 'Result';
-            var hasResult = responseGroup.hasOwnProperty(resultProperty);
-            var requestResult = hasResult? responseGroup[resultProperty][0].Request[0] : null;
-            var hasValidity = requestResult? requestResult.hasOwnProperty('IsValid'): null;
-            var validResult = hasValidity? requestResult.IsValid[0] === 'True': false;
-            var resultError = hasResult && !validResult;
-            var error = resultError? requestResult.Errors[0].Error[0]: null;
-            var errCode = error? error.Code[0] : '';
-            var errMsg = error? error.Message[0] : '';
-            var errKey = error && error.hasOwnProperty('Data')? error.Data[0].Key : '';
-            var errVal = error && error.hasOwnProperty('Data')? error.Data[0].Value : '';
-            var errData = errKey && errVal? errKey +':'+errVal : '';
-            result.errMessage = error? errCode +' - '+ errMsg + ' - '+ errData : '';
-            result.isValid = error? false : true;
-            result.errData = errData;
-            result.errVal = errVal[0];
-            result.errKey = errKey[0];
-            result.errCode = errCode;
-            //Returns object
-            // with various props
-            // isValid, errMessage, etc
-            return result;
-        }
-
-        return client;
-    }
-
-    return api;
+    return mturk;
 }
 
-function restify(params){
-    _.forOwn(params, function(value, key, obj) {
+function request(api, operation, params){
+    return new Promise(function(resolve, reject){
+        //Check that request operation is valid, otherwise display error message
+        if(api[operation] && typeof api[operation] == 'function') { api[operation](params).then(resolve).catch(reject); }
+        else { reject("Invalid Amazon Mechanical Turk API operation: '"+operation+"'. See the docs here: https://goo.gl/6RCpKU"); }
+    })
+}
 
-        if(_.isArray(value)){
-            _.forEach(value, function(item, index){
-                _.forEach(item, function(value, subkey){
-                    params[key+'.'+index+'.'+subkey] = value;
+function buildAPI(client, config, operations){
+    //Add a method for each available operation
+    var api = {};
+    _.forEach(operations, function(operation){
+        api[operation] = function(params){
+            var params = params || {};
+            return new Promise(function(resolve, reject){
+                client[operation](signRequest(config, operation, params), function(err, response){
+                    if(err){ return reject(err) }
+                    var valid = isValidResponse(response);
+                    valid? resolve(response) : reject(getErrorMessage(response))
                 });
             });
         }
-
-        if(_.isPlainObject(value)){
-            var subkeys = _.keys(value);
-            _.forEach(subkeys, function(subkey){
-                var path = key +'.1.'+subkey;
-                params[path] = value[subkey];
-            })
-        }
-    });
-    return params;
+    })
+    return api;
 }
 
+function signRequest(config, operation, parameters){
+    var message = {};
+    message.Request= parameters;
+    message.AWSAccessKeyId=  config.access;
+    message.Timestamp = new Date().toISOString();
+    var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA1, config.secret);
+    hmac.update(SERVICE + operation + message.Timestamp);
+    message.Signature = hmac.finalize().toString(CryptoJS.enc.Base64);
+    return message;
+}
 
-function throttledRequest(client, options, operation, params){
-    var params = params || {};
-    params = restify(params);
-    params.RequestGroup = params.RequestGroup || 'Request, Minimal';
-    params.Operation = operation;
-    params.Version = VERSION;
+function isValidResponse(res){
+    var validationProperty = 'IsValid';
+    var property = search(res, validationProperty);
+    if(_.isEmpty(property)) return false;
+    return property[0][validationProperty] === "True"? true : false;
+}
 
-    return new Promise(function(resolve, reject){
-        var signedRequest = signRequest(options, params);
-        signedRequest = querystring.stringify(signedRequest);
-        var payloadSize = Buffer.byteLength(signedRequest);
+function getErrorMessage(res){
+    var validationProperty = 'Error';
+    var property = search(res, validationProperty);
+    //Default error message is the response itself
+    var defaultMsg = JSON.stringify(res, null, '\t');
 
-        var reqOptions = {};
-        reqOptions.host = options.sandbox? SANDBOX : PRODUCTION;
-        reqOptions.method= METHOD;
-        reqOptions.headers = {};
-        reqOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        reqOptions.headers['Content-Length'] = payloadSize;
-
-        var req = https.request(reqOptions, function(res) {
-
-            if(res.statusCode !== 200){
-                var error = new Error(res.statusCode +' - '+ res.statusMessage)
-                reject(error);
-            }
-
-            var xmlBuffer = new Buffer([]);
-            res.on('data', function(chunk) {
-                xmlBuffer = Buffer.concat([xmlBuffer, chunk]);
-            })
-
-            res.on('end', function(){
-                var xmlString = xmlBuffer.toString('utf-8');
-                convertXMLToJSObject(xmlString).then(function(response){
-                    var test = client.isValidResponse(response);
-                    if(test.isValid){
-                        response = formatResponse(npmPackageVersion, response)
-                        resolve(response);
-                    } else {
-                        var customError = new Error();
-                        customError.message = test.errMessage;
-                        reject(new Error(customError))
-                    }
-                }).catch(reject);
-            })
-
-            res.on('error', reject)
-        });
-
-        req.write(signedRequest);
-        req.end();
-    })
-};
-
-function formatResponse(version, res){
-    switch( version ){
-        case 1:
-            var keys = Object.keys(res);
-            var rootKey = keys[0];
-            return res[rootKey];
-            break;
-        default:
-            return res;
+    if(_.isEmpty(property)){
+        return new Error(defaultMsg);
     }
+    var msg = property[0][validationProperty][0].Message || defaultMsg;
+    return new Error(msg);
 }
 
-function convertXMLToJSObject(xml){
-    return new Promise(function(resolve, reject){
-        parseXML(xml, function (err, response) {
-            err? reject(err) : resolve(response);
-        });
-    })
-};
-
-function signRequest(credentials, params){
-    params.AWSAccessKeyId=  credentials.access;
-    params.Timestamp = new Date().toISOString();
-    var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA1, credentials.secret);
-    hmac.update(SERVICE + params.Operation + params.Timestamp);
-    params.Signature = hmac.finalize().toString(CryptoJS.enc.Base64);
-    return params;
+function search(obj, key) {
+    if (_.has(obj, key)){
+        return [obj];
+    }
+    var res = [];
+    _.forEach(obj, function(v) {
+        if (typeof v == "object" && (v = search(v, key)).length)
+            res.push.apply(res, v);
+    });
+    return res;
 }
 
 //EXPORT

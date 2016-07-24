@@ -1,30 +1,30 @@
 {
-    "name": "mturk-api",
-    "version": "3.0.0",
-    "description": "JS implementation of Amazon Mechanical Turk (mturk) API",
-    "scripts": {
-        "test": " mocha"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/josebarrios/mturk-api.git"
-    },
-    "keywords": [
-        "amazon mechanical turk, api, mturk, amt, amazon, turk"
-    ],
-    "author": "Jose Barrios <jlbarrios22@gmail.com>",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/josebarrios/mturk-api/issues"
-    },
-    "homepage": "https://github.com/josebarrios/mturk-api#readme",
-    "dependencies": {
-        "crypto-js": "^3.1.5",
-        "lodash": "^4.13.1",
-        "promise-throttle": "^0.2.0",
-        "soap": "^0.16.0"
-    },
-    "devDependencies": {
-        "mocha": "^2.3.0"
-    }
+  "name": "mturk-api",
+  "version": "3.0.1",
+  "description": "JS implementation of Amazon Mechanical Turk (mturk) API",
+  "scripts": {
+    "test": " mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josebarrios/mturk-api.git"
+  },
+  "keywords": [
+    "amazon mechanical turk, api, mturk, amt, amazon, turk"
+  ],
+  "author": "Jose Barrios <jlbarrios22@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/josebarrios/mturk-api/issues"
+  },
+  "homepage": "https://github.com/josebarrios/mturk-api#readme",
+  "dependencies": {
+    "crypto-js": "^3.1.5",
+    "lodash": "^4.13.1",
+    "promise-throttle": "^0.2.0",
+    "soap": "^0.16.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.0"
+  }
 }

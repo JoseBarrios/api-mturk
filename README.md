@@ -17,40 +17,34 @@ var config = {
     sandbox: true
 }
 
+
 mturk.createClient(config).then(function(api){
 
-  api.req('GetAccountBalance').then(function(res){
+
+  api.req('GetAccountBalance').then(function(response){
     //Do something
   }).catch(console.error);
 
-  //Example operation, no params
-  api.req('GetAccountBalance').then(function(response){
-    //Do something
-  }, function(error){
-    //Handle error
-  });
 
   //Example operation, with params
   api.req('SearchHITs', { PageSize: 100, PageNumber: 2 }).then(function(response){
      //Do something
   }).catch(console.error)
 
+
   //Amazon Mechanical Turk limits the velocity of requests.
   //Normally, if you exceed the limit you will receive a
   //503 Service Unavailable error. As of v2.0, our interface
   //automatically throttles your requests to 3 per second.
-  var pageNum = 1;
-  var ITERATIONS = 30;
   for(var i=0; i < ITERATIONS; i++){
     //These requests will be queued and executed at a rate of 3 per second
-    api.req('SearchHITs', { PageSize: 100, PageNumber: pageNum }).then(function(response){
-        var currPage = Number(response.SearchHITsResponse.SearchHITsResult[0].PageNumber);
-        if(currPage === ITERATIONS){ done(); }
-    }).catch(done);
-    pageNum++;
+    api.req('SearchHITs', { PageSize: 100, PageNumber: i }).then(function(response){
+      //Do something
+    }).catch(console.error);
   }
 
-}).catch(handleError)
+
+}).catch(console.error);
 
 
 ```

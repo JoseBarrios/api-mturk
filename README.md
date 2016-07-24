@@ -49,10 +49,10 @@ mturk.createClient(config).then(function(api){
 
 ```
 
-Create HIT
+###Create HIT Example
 ```js
 
-//Import an XML file. You can use one of our examples in the templates folder*
+//Import an XML file. You can use one of our examples in the templates folder *
 fs.readFile('./templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
   if(err){console.error(err);return}
   
@@ -60,7 +60,7 @@ fs.readFile('./templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
   var params = {
     Title: "Create HIT Example",
     Description: "An example of how to create a HIT",
-    Question: _.escape(unxcapedXML),//IMPORTANT: XML NEEDS TO BE ESCAPED
+    Question: _.escape(unescapedXML),//IMPORTANT: XML NEEDS TO BE ESCAPED!
     AssignmentDurationInSeconds: 180, // Allow 3 minutes to answer
     AutoApprovalDelayInSeconds: 86400 * 1, // 1 day auto approve
     MaxAssignments: 100, // 100 worker responses
@@ -75,7 +75,8 @@ fs.readFile('./templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
 })
 
 ```
-* To see the all available Question templates, go to our [templates folder](https://github.com/JoseBarrios/mturk-api/tree/master/templates)
+\* To see the all available Question templates, go to our [templates folder](https://github.com/JoseBarrios/mturk-api/tree/master/templates)
+
 
 
 

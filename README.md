@@ -36,7 +36,7 @@ mturk.createClient(config).then(function(api){
   //Normally, if you exceed the limit you will receive a
   //503 Service Unavailable error. As of v2.0, our interface
   //automatically throttles your requests to 3 per second.
-  for(var i=0; i < ITERATIONS; i++){
+  for(var i=0; i < 20; i++){
     //These requests will be queued and executed at a rate of 3 per second
     api.req('SearchHITs', { PageSize: 100, PageNumber: i }).then(function(response){
       //Do something

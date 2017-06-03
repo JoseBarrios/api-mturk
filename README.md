@@ -49,7 +49,7 @@ mturk.createClient(config).then(function(api){
 
 ```
 
-###Create HIT Example
+### Create HIT Example
 ```js
 
 //Import an XML file. You can use one of our examples in the templates folder *
@@ -74,7 +74,40 @@ fs.readFile('./templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
   
 })
 
+
 ```
+
+
+### Usage with ES7
+```js
+var mturk = require('mturk-api');
+
+var config = {
+    access : 'ACCESS_KEY_GOES_HERE',
+    secret : 'SECRET_KEY_GOES_HERE',
+    sandbox: true
+}
+
+const api = await mturk.createClient(config)
+const balance = await api.GetAccountBalance()
+console.log('AccountBalance: ', balance.GetAccountBalanceResult[0].AvailableBalance.Amount)
+
+
+```
+### Running tests
+#### Create src/config.js
+```js
+exports.access =  "ACCESS_KEY_GOES_HERE";
+exports.secret = "SECRET_KEY_GOES_HERE";
+```
+##### Build & test
+```
+$npm run build && npm test
+```
+
+
+
+
 \* To see the all available Question templates, go to our [templates folder](https://github.com/JoseBarrios/mturk-api/tree/master/templates)
 
 

@@ -133,6 +133,17 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
 
+    it('DisposeHIT', async() => {
+        const api = await mturk.createClient(config)
+        const hit = await api.CreateHIT(getHITParams())
+        
+        await api.ForceExpireHIT({ HITId: hit.HIT[0].HITId })
+
+        const res = await api.DisposeHIT({ HITId: hit.HIT[0].HITId })             
+        should.equal(res.DisposeHITResult[0].Request.IsValid, 'True')
+    })
+
+
     //REQUIIRES AMAZON SQS SERVICE (AND SETUP)
     //DONT FORGET TO REMOVE 'SKIP' TO ENABLE THE TEST
     //IF YOU ARE A CONTRIBUTOR, DONT FORGET TO

@@ -172,22 +172,20 @@ describe('Amazon Mechanical Turk API', function() {
 describe('Testing throttling (give it a few secs)', function() {
 
     //Slows down requests to keep them under the allowed limits
-    it('Multiple simulataneous requests', function(done) {
-        //Allow for extra time
-        this.timeout(20000);
-        this.slow(20000);
-        mturk.createClient(config).then(function(api){
-            var MAX_ITERATIONS = 30;
-            var pageNum = 1;
-            for(var i=0; i < MAX_ITERATIONS; i++){
-                api.req('SearchHITs', { PageSize: 100, PageNumber: pageNum }).then(function(response){
-                    var currPage = Number(response.SearchHITsResult[0].PageNumber);
-                    if(currPage === MAX_ITERATIONS){ done(); }
-                }).catch(done);
-                pageNum++;
-            }
+    it('Multiple simulataneous requests', async function(done) {
+        const MAX_ITERATIONS = 30
+        let pageNum = 1
 
-        })
+        //Allow for extra time
+        this.timeout(20000)
+        this.slow(20000)
+        const api = await mturk.createClient(config)
+        for(var i=0; i < MAX_ITERATIONS; i++){
+            let res = await api.SearchHITs({ PageSize: 100, PageNumber: pageNum })
+            let currPage = Number(res.SearchHITsResult[0].PageNumber)
+            if(currPage === MAX_ITERATIONS){ done() }
+            pageNum++
+        }
     })
 
     //MORE TO COME
@@ -201,17 +199,15 @@ describe('Testing throttling (give it a few secs)', function() {
 describe('Legacy support checks', function() {
 
     //COVERS 1.0.0 to 1.3.5
-    it('v1.0 Compatibility', function(done) {
-        this.timeout(20000);
-        this.slow(20000);
-        var params = {PageSize: 1}
+    it('v1.0 Compatibility', async function() {
+        this.timeout(20000)
+        this.slow(20000)
+        const params = {PageSize: 1}
         //1.0 CLIENT METHODS
-        mturk.connect(config).then(function(legacy){
-            legacy.req('SearchHITs', params).then(function(res){
-                done();
-            }).catch(done);
-        }).catch(done)
-    });
+        const legacy = await mturk.connect(config)
+        const res = await legacy.SearchHITs(params)
+        should.equal(res.SearchHITsResult[0].Request.IsValid, 'True')
+    })
 
 
     //MORE TO COME

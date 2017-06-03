@@ -55,6 +55,15 @@ describe('Amazon Mechanical Turk API', function() {
     });
 
 
+    it('RegisterHITType', async () => {
+        const api = await mturk.createClient(config);
+        const res = await api.RegisterHITType(getHITParams())
+        should.equal(res.RegisterHITTypeResult[0].Request.IsValid, 'True')
+
+        HITTypeId = res.RegisterHITTypeResult[0].HITTypeId
+    })
+
+
     it('CreateQualificationType', async function() {
         let params = { Name:'SANDBOX_QUALIFICATION_4',Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', QualificationTypeStatus:'Active' }
 

@@ -122,7 +122,7 @@ describe('Amazon Mechanical Turk API', function() {
 
 
     it('GetHIT', async () => {
-        const params =  { HITId:HITId }
+        const params =  { HITId }
         
         const res = await api.GetHIT(params)
         should.equal(res.HIT[0].Request.IsValid, 'True')
@@ -138,11 +138,19 @@ describe('Amazon Mechanical Turk API', function() {
 
 
     it('ForceExpireHIT', async () => {
-        const params =  { HITId:HITId } 
+        const params =  { HITId } 
         
         const res = await api.ForceExpireHIT(params)
         should.equal(res.ForceExpireHITResult[0].Request.IsValid, 'True')
     });
+
+
+    it('DisableHIT', async() => {
+        const hit = await api.CreateHIT(getHITParams())
+        
+        const res = await api.DisableHIT({ HITId: hit.HIT[0].HITId })             
+        should.equal(res.DisableHITResult[0].Request.IsValid, 'True')
+    })
 
 
     it('DisposeHIT', async() => {

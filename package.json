@@ -3,7 +3,8 @@
   "version": "3.0.1",
   "description": "JS implementation of Amazon Mechanical Turk (mturk) API",
   "scripts": {
-    "test": " mocha"
+    "test": "mocha dist/ --recursive",
+    "build": "babel src -d dist --copy-files"
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,13 @@
     "crypto-js": "^3.1.5",
     "lodash": "^4.13.1",
     "promise-throttle": "^0.2.0",
-    "soap": "^0.19.0"
+    "soap": "^0.16.0"
   },
   "devDependencies": {
-    "mocha": "^2.3.0"
+    "babel-cli": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.5.1",
+    "mocha": "^2.3.0",
+    "should": "^11.2.1"
   }
 }

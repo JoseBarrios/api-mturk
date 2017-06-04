@@ -6,5 +6,5 @@ dist
 tmp
 coverage
 npm-debug.log
-test/config.js
-config.js
+*test/config.js
+*config.js

@@ -35,7 +35,7 @@ function getHITParams() {
 
 
 describe('Amazon Mechanical Turk API', function() {
-    let api, HITId, HITTypeId, qualificationTypeId, assignmentId
+    let api, HITTypeId, qualificationTypeId, assignmentId
 
     before(async function() {
         api = await mturk.createClient(config)
@@ -46,8 +46,6 @@ describe('Amazon Mechanical Turk API', function() {
         it('CreateHIT', async () => {
             const res = await api.CreateHIT(getHITParams())
             should.equal(res.HIT[0].Request.IsValid, 'True')
-
-            HITId = res.HIT[0].HITId;
         })
 
 
@@ -235,7 +233,12 @@ describe('Amazon Mechanical Turk API', function() {
 
 
     describe('Tests with HITs', function() {
-        //Create a new HIT in before?
+        let HITId
+
+        before(async () => {
+            const res = await api.CreateHIT(getHITParams())
+            HITId = res.HIT[0].HITId;
+        })
 
         it('SearchHITs', async () => {
             const params = {PageSize: 1}
@@ -250,14 +253,6 @@ describe('Amazon Mechanical Turk API', function() {
             
             const res = await api.GetHIT(params)
             should.equal(res.HIT[0].Request.IsValid, 'True')
-        })
-
-
-        it('ChangeHITTypeOfHIT', async () => {
-            const params = { HITId, HITTypeId }
-            
-            const res = await api.ChangeHITTypeOfHIT(params)
-            should.equal(res.ChangeHITTypeOfHITResult[0].Request.IsValid, 'True')
         })
 
 
@@ -331,6 +326,65 @@ describe('Amazon Mechanical Turk API', function() {
         it('DisposeHIT', async() => {
             const res = await api.DisposeHIT({ HITId })             
             should.equal(res.DisposeHITResult[0].Request.IsValid, 'True')
+        })
+    })
+
+
+    describe("HITTypeId required", function(){
+        let HITTypeId
+
+        before(async() => {
+            const res = await api.RegisterHITType(getHITParams())
+            should.equal(res.RegisterHITTypeResult[0].Request.IsValid, 'True')
+
+            HITTypeId = res.RegisterHITTypeResult[0].HITTypeId
+        })
+
+
+        it('CreateHIT with HITTypeId', async () => {
+            const params = { HITTypeId, 
+                             "Question": getHITParams().Question,
+                            "LifetimeInSeconds": 3600 }
+
+            const res = await api.CreateHIT(params)
+            should.equal(res.HIT[0].Request.IsValid, 'True')
+        })
+
+
+        it('SetHITTypeNotification', async () => {
+            const params =  { HITTypeId,
+                              "Notification": [
+                                  {
+                                      "Destination": "janedoe@example.com",
+                                      "Transport": "Email",
+                                      "Version": "2006-05-05",
+                                      "EventType": "AssignmentSubmitted"
+                                  }
+                              ] } 
+            
+            const res = await api.SetHITTypeNotification(params)
+            should.equal(res.SetHITTypeNotificationResult[0].Request.IsValid, 'True')
+        })
+    })
+
+
+    describe('Tests with HITId and HITTypeId', function() {
+         let HITId, HITTypeId
+
+        before(async() => {
+            const hitTypeRes = await api.RegisterHITType(getHITParams())
+            HITTypeId = hitTypeRes.RegisterHITTypeResult[0].HITTypeId
+
+            const HITRes = await api.CreateHIT(getHITParams())
+            HITId = HITRes.HIT[0].HITId;
+        })
+
+
+        it('ChangeHITTypeOfHIT', async () => {
+            const params = { HITId, HITTypeId }
+            
+            const res = await api.ChangeHITTypeOfHIT(params)
+            should.equal(res.ChangeHITTypeOfHITResult[0].Request.IsValid, 'True')
         })
     })
 

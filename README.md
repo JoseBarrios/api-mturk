@@ -121,7 +121,7 @@ Operation  | Required Parameters | Unit test
 [AssignQualification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_AssignQualificationOperation.html) | { **QualificationTypeId**:String, **WorkerId**:String } | ✓
 [BlockWorker](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_BlockWorkerOperation.html) | { **WorkerId**:String, **Reason**:String } | ✓
 [ChangeHITTypeOfHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ChangeHITTypeOfHITOperation.html) | { **HITId**:String, **HITTypeId**:String} | ✓
-[CreateHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateHITOperation.html) | { **Title**:String, **Description**:String, **AssignmentDurationInSeconds**:Number, **LifetimeInSeconds**:Number } OR {**HITTypeId**:String, **LifetimeInSeconds**:Number } | ✓
+[CreateHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateHITOperation.html) | { **Title**:String, **Description**:String, **AssignmentDurationInSeconds**:Number, **LifetimeInSeconds**:Number } OR {**HITTypeId**:String, **LifetimeInSeconds**:Number, **Question**: String } | ✓
 [CreateQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_CreateQualificationTypeOperation.html) | { **Name**:String, **Description**:String, **QualificationTypeStatus**:String } | ✓
 [DisableHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisableHITOperation.html) | { **HITId**:String } | ✓
 [DisposeHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_DisposeHITOperation.html) | { **HITId**:String } | ✓
@@ -155,7 +155,7 @@ Operation  | Required Parameters | Unit test
 [SearchQualificationTypes](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SearchQualificationTypesOperation.html) | { **MustBeRequestable**:Boolean } | ✓
 [SendTestEventNotification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SendTestEventNotificationOperation.html) | {  **Notification**:Object, **TestEventType**:Object } | ✓
 [SetHITAsReviewing](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SetHITAsReviewingOperation.html) | { **HITId**:String } | ✓
-[SetHITTypeNotification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SetHITTypeNotificationOperation.html) | { **HITTypeId**:String, **Notification**:Object, }
+[SetHITTypeNotification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SetHITTypeNotificationOperation.html) | { **HITTypeId**:String, **Notification**:Object, } | ✓
 [UnblockWorker](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UnblockWorkerOperation.html) | { **WorkerId**:String,  } | ✓
 [UpdateQualificationScore](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UpdateQualificationScoreOperation.html) | { **QualificationTypeId**:String, **SubjectId**:String, **IntegerValue**:Number } | ✓
 [UpdateQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_UpdateQualificationTypeOperation.html) | { **QualificationTypeId**:String, **QualificationTypeStatus**: String } | ✓

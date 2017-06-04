@@ -46,6 +46,8 @@ describe('Amazon Mechanical Turk API', function() {
         it('CreateHIT', async () => {
             const res = await api.CreateHIT(getHITParams())
             should.equal(res.HIT[0].Request.IsValid, 'True')
+
+            HITId = res.HIT[0].HITId;
         })
 
 
@@ -202,6 +204,16 @@ describe('Amazon Mechanical Turk API', function() {
             should.equal(res.QualificationType[0].Request.IsValid, 'True')
         })
 
+        
+        it('UpdateQualificationScore', async () => {
+            const params = { QualificationTypeId: qualificationTypeId,
+                             SubjectId: WORKER_ID,
+                             IntegerValue: 5 }
+            
+            const res = await api.UpdateQualificationScore(params)
+            should.equal(res.UpdateQualificationScoreResult[0].Request.IsValid, 'True')
+        })
+
 
         it('RevokeQualification', async () => {
             const params = {QualificationTypeId: qualificationTypeId,
@@ -230,8 +242,6 @@ describe('Amazon Mechanical Turk API', function() {
 
             const res = await api.req('SearchHITs', params)
             should(res.SearchHITsResult[0].HIT[0].HITId).be.a.String()
-
-            HITId = res.SearchHITsResult[0].HIT[0].HITId;
         })
 
 
@@ -256,14 +266,6 @@ describe('Amazon Mechanical Turk API', function() {
             
             const res = await api.GetBonusPayments(params)
             should.equal(res.GetBonusPaymentsResult[0].Request.IsValid, 'True')
-        })
-
-
-        it('SetHITAsReviewing', async () => {
-            const params =  { HITId, "Revert": true }
-            
-            const res = await api.SetHITAsReviewing(params)
-            should.equal(res.SetHITAsReviewingResult[0].Request.IsValid, 'True')
         })
 
 
@@ -308,13 +310,21 @@ describe('Amazon Mechanical Turk API', function() {
     })
 
 
-    describe('DisposeHIT test', function() {
+    describe('Tests, which need an expired HIT', function() {
         let HITId
 
         before(async() => {
             const hit = await api.CreateHIT(getHITParams())
             HITId = hit.HIT[0].HITId
             await api.ForceExpireHIT({ HITId })
+        })
+
+
+        it('SetHITAsReviewing', async () => {
+            const params =  { HITId }
+            
+            const res = await api.SetHITAsReviewing(params)
+            should.equal(res.SetHITAsReviewingResult[0].Request.IsValid, 'True')
         })
 
 

@@ -148,7 +148,7 @@ describe('Amazon Mechanical Turk API', function() {
     it('DisableHIT', async() => {
         const hit = await api.CreateHIT(getHITParams())
         
-        const res = await api.DisableHIT({ HITId: hit.HIT[0].HITId })             
+        const res = await api.DisableHIT({ HITId: hit.HIT[0].HITId })        
         should.equal(res.DisableHITResult[0].Request.IsValid, 'True')
     })
 

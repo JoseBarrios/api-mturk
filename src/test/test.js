@@ -139,6 +139,22 @@ describe('Amazon Mechanical Turk API', function() {
         })
 
 
+        it('SearchQualificationTypes - MustBeRequestable = true', async () => {
+            const params = { "MustBeRequestable": true }
+            
+            const res = await api.SearchQualificationTypes(params)
+            should.equal(res.SearchQualificationTypesResult[0].Request.IsValid, 'True')
+        })
+
+
+        it('SearchQualificationTypes - MustBeRequestable = false', async () => {
+            const params = { "MustBeRequestable": false }
+            
+            const res = await api.SearchQualificationTypes(params)
+            should.equal(res.SearchQualificationTypesResult[0].Request.IsValid, 'True')
+        })
+
+
         it('GetHITsForQualificationType', async () => {
             const params = { "QualificationTypeId": qualificationTypeId }
             

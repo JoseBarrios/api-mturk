@@ -152,6 +152,12 @@ describe('Amazon Mechanical Turk API', function() {
         should.equal(res.DisableHITResult[0].Request.IsValid, 'True')
     })
 
+    it('ExtendHIT', async() => {
+        const hit = await api.CreateHIT(getHITParams())
+        
+        const res = await api.ExtendHIT({ HITId: hit.HIT[0].HITId })             
+        should.equal(res.ExtendHITResult[0].Request.IsValid, 'True')
+    })
 
     it('DisposeHIT', async() => {
         const hit = await api.CreateHIT(getHITParams())

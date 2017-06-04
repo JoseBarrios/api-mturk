@@ -127,6 +127,14 @@ describe('Amazon Mechanical Turk API', function() {
             const res = await api.AssignQualification(params)
             should.equal(res.AssignQualificationResult[0].Request.IsValid, 'True')
         })
+        
+
+        it('GetQualificationScore', async () => {
+            const params = {QualificationTypeId: qualificationTypeId, SubjectId:WORKER_ID}
+            
+            const res = await api.GetQualificationScore(params)
+            should.equal(res.Qualification[0].Request.IsValid, 'True')
+        })
 
 
         it('DisposeQualificationType', async () => {

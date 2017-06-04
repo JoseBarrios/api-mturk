@@ -135,7 +135,7 @@ Operation  | Required Parameters | Unit test
 [GetBonusPayments](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetBonusPaymentsOperation.html) | { **HITId**:String } OR { **AssignmentId**:String } | ✓
 [GetFileUploadURL](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetFileUploadURLOperation.html) | { **AssignmentId**:String, **QuestionIdentifier**:String }
 [GetHIT](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetHITOperation.html) | { **HITId**:String } | ✓
-[GetHITsForQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetHITsForQualificationTypeOperation.html) | { **QualificationTypeId**:String }
+[GetHITsForQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetHITsForQualificationTypeOperation.html) | { **QualificationTypeId**:String } | ✓
 [GetQualificationsForQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationsForQualificationTypeOperation.html) | { **QualificationTypeId**:String }
 [GetQualificationRequests](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationRequestsOperation.html) | *None*
 [GetQualificationScore](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationScoreOperation.html) | {  **QualificationTypeId**:String, **SubjectId**:String}

@@ -88,7 +88,7 @@ describe('Amazon Mechanical Turk API', function() {
 
     describe('Qualification related tests', function() {
         it('CreateQualificationType', async function() {
-            let params = { Name:'SANDBOX_QUALIFICATION_4',
+            let params = { Name:'SANDBOX_QUALIFICATION_5',
                         Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', 
                         QualificationTypeStatus:'Active' }
 
@@ -96,6 +96,14 @@ describe('Amazon Mechanical Turk API', function() {
             should(res.QualificationType[0].QualificationTypeId).be.a.String()
 
             qualificationTypeId = res.QualificationType[0].QualificationTypeId;
+        })
+
+
+        it('GetHITsForQualificationType', async () => {
+            const params = { "QualificationTypeId": qualificationTypeId }
+            
+            const res = await api.GetHITsForQualificationType(params)
+            should.equal(res.GetHITsForQualificationTypeResult[0].Request.IsValid, 'True')
         })
 
 

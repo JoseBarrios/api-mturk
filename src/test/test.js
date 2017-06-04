@@ -145,6 +145,14 @@ describe('Amazon Mechanical Turk API', function() {
         })
 
 
+        it('GetAssignmentsForHIT', async () => {
+            const params = { HITId, HITTypeId }
+            
+            const res = await api.GetAssignmentsForHIT(params)
+            should.equal(res.GetAssignmentsForHITResult[0].Request.IsValid, 'True')
+        })
+
+
         it('ExtendHIT', async() => {
             const hit = await api.CreateHIT(getHITParams())
             

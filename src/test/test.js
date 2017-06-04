@@ -107,6 +107,12 @@ describe('Amazon Mechanical Turk API', function() {
             const res = await api.GetRequesterWorkerStatistic(params)
             should.equal(res.GetStatisticResult[0].Request.IsValid, 'True')
         })
+
+        
+        it('GetReviewableHITs', async () => {
+            const res = await api.GetReviewableHITs()
+            should.equal(res.GetReviewableHITsResult[0].Request.IsValid, 'True')
+        })
     })
 
 

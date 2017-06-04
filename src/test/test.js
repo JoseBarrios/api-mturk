@@ -107,6 +107,14 @@ describe('Amazon Mechanical Turk API', function() {
         })
 
 
+        it('GetQualificationsForQualificationType', async () => {
+            const params = { "QualificationTypeId": qualificationTypeId }
+            
+            const res = await api.GetQualificationsForQualificationType(params)
+            should.equal(res.GetQualificationsForQualificationTypeResult[0].Request.IsValid, 'True')
+        })
+
+
         it('AssignQualification', async () => {
             const params = {QualificationTypeId: qualificationTypeId, WorkerId:WORKER_ID}
             

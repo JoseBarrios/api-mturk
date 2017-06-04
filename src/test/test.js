@@ -80,21 +80,29 @@ describe('Amazon Mechanical Turk API', function() {
 
 
         it('GetAccountBalance', async () => {
-            const balance = await api.GetAccountBalance();
+            const balance = await api.GetAccountBalance()
             should.equal(balance.GetAccountBalanceResult[0].AvailableBalance.Amount, 10000)
         });
 
 
         it('GetQualificationRequests', async () => {
-            const res = await api.GetQualificationRequests();
+            const res = await api.GetQualificationRequests()
             should.equal(res.GetQualificationRequestsResult[0].Request.IsValid, 'True')
+        });
+
+
+        it('GetRequesterStatistic', async () => {
+            const params = { Statistic:"NumberAssignmentsApproved", TimePeriod:"ThirtyDays" }
+
+            const res = await api.GetRequesterStatistic(params)
+            should.equal(res.GetStatisticResult[0].Request.IsValid, 'True')
         });
     })
 
 
     describe('Qualification related tests', function() {
         it('CreateQualificationType', async function() {
-            let params = { Name:'SANDBOX_QUALIFICATION_5',
+            let params = { Name:'SANDBOX_QUALIFICATION_6',
                         Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', 
                         QualificationTypeStatus:'Active' }
 

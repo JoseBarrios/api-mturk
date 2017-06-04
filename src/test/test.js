@@ -113,6 +113,16 @@ describe('Amazon Mechanical Turk API', function() {
             const res = await api.GetReviewableHITs()
             should.equal(res.GetReviewableHITsResult[0].Request.IsValid, 'True')
         })
+
+
+        it('NotifyWorkers', async () => {
+            const params = { Subject:"Example Subject",
+                             MessageText:"Example Message Text", 
+                             WorkerId:[WORKER_ID]}
+
+            const res = await api.NotifyWorkers(params)
+            should.equal(res.NotifyWorkersResult[0].Request.IsValid, 'True')
+        })
     })
 
 

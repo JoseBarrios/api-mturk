@@ -274,6 +274,14 @@ describe('Amazon Mechanical Turk API', function() {
         })
 
 
+        it('SetHITAsReviewing', async () => {
+            const params =  { HITId }
+            
+            const res = await api.SetHITAsReviewing(params)
+            should.equal(res.SetHITAsReviewingResult[0].Request.IsValid, 'True')
+        })
+
+
         it('ForceExpireHIT', async () => {
             const params =  { HITId } 
             

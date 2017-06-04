@@ -12,11 +12,7 @@ config.sandbox = true;
 
 
 //These variables are assign as we move through the tests
-const workerId = "A2Q1RSC9MWUTL2";
-let qualificationTypeId = null;
-let HITId = null;
-let HITTypeId = null;
-let assignmentId = null;
+const WORKER_ID = "A2Q1RSC9MWUTL2";
 
 
 function getHITParams() {
@@ -34,138 +30,160 @@ function getHITParams() {
 }
 
 
+
+
+
+
 describe('Amazon Mechanical Turk API', function() {
-    let api
+    let api, HITId, HITTypeId, qualificationTypeId, assignmentId
 
     before(async function() {
         api = await mturk.createClient(config)
     })
 
 
-    it('CreateHIT', async () => {
-        const res = await api.CreateHIT(getHITParams())
-        should.equal(res.HIT[0].Request.IsValid, 'True')
+    describe('No HIT required tests', function () {
+        it('CreateHIT', async () => {
+            const res = await api.CreateHIT(getHITParams())
+            should.equal(res.HIT[0].Request.IsValid, 'True')
+        })
+
+
+        it('RegisterHITType', async () => {
+            const res = await api.RegisterHITType(getHITParams())
+            should.equal(res.RegisterHITTypeResult[0].Request.IsValid, 'True')
+
+            HITTypeId = res.RegisterHITTypeResult[0].HITTypeId
+        })
+
+
+        it('BlockWorker', async() => {
+            const params = {WorkerId:WORKER_ID, Reason:"Testing block operation" }
+            
+            const res = await api.BlockWorker(params)
+            should.equal(res.BlockWorkerResult[0].Request.IsValid, 'True')
+        });
+
+
+        it('GetBlockedWorkers', async () => {
+            const res = await api.GetBlockedWorkers()
+            should.equal(res.GetBlockedWorkersResult[0].Request.IsValid, 'True')
+        });
+
+
+        it('UnblockWorker', async () => {
+            const params = {WorkerId:WORKER_ID}
+            
+            const res = await api.UnblockWorker(params)
+            should.equal(res.UnblockWorkerResult[0].Request.IsValid, 'True')
+        });
+
+
+        it('GetAccountBalance', async () => {
+            const balance = await api.GetAccountBalance();
+            should.equal(balance.GetAccountBalanceResult[0].AvailableBalance.Amount, 10000)
+        });
     })
 
 
-    it('SearchHITs', async () => {
-        const params = {PageSize: 1}
+    describe('Qualification related tests', function() {
+        it('CreateQualificationType', async function() {
+            let params = { Name:'SANDBOX_QUALIFICATION_4',
+                        Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', 
+                        QualificationTypeStatus:'Active' }
 
-        const res = await api.req('SearchHITs', params)
-        should(res.SearchHITsResult[0].HIT[0].HITId).be.a.String()
+            const res = await api.req('CreateQualificationType', params)
+            should(res.QualificationType[0].QualificationTypeId).be.a.String()
 
-        HITId = res.SearchHITsResult[0].HIT[0].HITId;
-    });
+            qualificationTypeId = res.QualificationType[0].QualificationTypeId;
+        })
 
 
-    it('RegisterHITType', async () => {
-        const res = await api.RegisterHITType(getHITParams())
-        should.equal(res.RegisterHITTypeResult[0].Request.IsValid, 'True')
+        it('AssignQualification', async () => {
+            const params = {QualificationTypeId: qualificationTypeId, WorkerId:WORKER_ID}
+            
+            const res = await api.AssignQualification(params)
+            should.equal(res.AssignQualificationResult[0].Request.IsValid, 'True')
+        })
 
-        HITTypeId = res.RegisterHITTypeResult[0].HITTypeId
+
+        it('DisposeQualificationType', async () => {
+            const params =  { QualificationTypeId : qualificationTypeId }
+            
+            const res = await api.DisposeQualificationType(params)
+            should.equal(res.DisposeQualificationTypeResult[0].Request.IsValid, 'True')
+        })
     })
 
 
-    it('ChangeHITTypeOfHIT', async () => {
-        const params = { HITId, HITTypeId }
-        
-        const res = await api.ChangeHITTypeOfHIT(params)
-        should.equal(res.ChangeHITTypeOfHITResult[0].Request.IsValid, 'True')
+    describe('Tests with HITs', function() {
+        //Create a new HIT in before?
+
+        it('SearchHITs', async () => {
+            const params = {PageSize: 1}
+
+            const res = await api.req('SearchHITs', params)
+            should(res.SearchHITsResult[0].HIT[0].HITId).be.a.String()
+
+            HITId = res.SearchHITsResult[0].HIT[0].HITId;
+        });
+
+
+        it('GetHIT', async () => {
+            const params =  { HITId }
+            
+            const res = await api.GetHIT(params)
+            should.equal(res.HIT[0].Request.IsValid, 'True')
+        });
+
+
+        it('ChangeHITTypeOfHIT', async () => {
+            const params = { HITId, HITTypeId }
+            
+            const res = await api.ChangeHITTypeOfHIT(params)
+            should.equal(res.ChangeHITTypeOfHITResult[0].Request.IsValid, 'True')
+        })
+
+
+        it('ExtendHIT', async() => {
+            const hit = await api.CreateHIT(getHITParams())
+            
+            const res = await api.ExtendHIT({ HITId: hit.HIT[0].HITId })             
+            should.equal(res.ExtendHITResult[0].Request.IsValid, 'True')
+        })
+
+
+        it('ForceExpireHIT', async () => {
+            const params =  { HITId } 
+            
+            const res = await api.ForceExpireHIT(params)
+            should.equal(res.ForceExpireHITResult[0].Request.IsValid, 'True')
+        })
+
+
+        it('DisableHIT', async() => {
+            const hit = await api.CreateHIT(getHITParams())
+            
+            const res = await api.DisableHIT({ HITId: hit.HIT[0].HITId })        
+            should.equal(res.DisableHITResult[0].Request.IsValid, 'True')
+        })
     })
 
 
-    it('CreateQualificationType', async function() {
-        let params = { Name:'SANDBOX_QUALIFICATION_4',
-                       Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', 
-                       QualificationTypeStatus:'Active' }
+    describe('DisposeHIT test', function() {
+        let HITId
 
-        const res = await api.req('CreateQualificationType', params)
-        should(res.QualificationType[0].QualificationTypeId).be.a.String()
-
-        qualificationTypeId = res.QualificationType[0].QualificationTypeId;
-    });
+        before(async() => {
+            const hit = await api.CreateHIT(getHITParams())
+            HITId = hit.HIT[0].HITId
+            await api.ForceExpireHIT({ HITId })
+        })
 
 
-    it('GetAccountBalance', async () => {
-        const balance = await api.GetAccountBalance();
-        should.equal(balance.GetAccountBalanceResult[0].AvailableBalance.Amount, 10000)
-    });
-
-
-    it('BlockWorker', async() => {
-        const params = {WorkerId:workerId, Reason:"Testing block operation" }
-        
-        const res = await api.BlockWorker(params)
-        should.equal(res.BlockWorkerResult[0].Request.IsValid, 'True')
-    });
-
-
-    it('GetBlockedWorkers', async () => {
-        const res = await api.GetBlockedWorkers()
-        should.equal(res.GetBlockedWorkersResult[0].Request.IsValid, 'True')
-    });
-
-
-    it('UnblockWorker', async () => {
-        const params = {WorkerId:workerId}
-        
-        const res = await api.UnblockWorker(params)
-        should.equal(res.UnblockWorkerResult[0].Request.IsValid, 'True')
-    });
-
-    it('AssignQualification', async () => {
-        const params = {QualificationTypeId: qualificationTypeId, WorkerId:workerId}
-        
-        const res = await api.AssignQualification(params)
-        should.equal(res.AssignQualificationResult[0].Request.IsValid, 'True')
-    });
-
-
-    it('GetHIT', async () => {
-        const params =  { HITId }
-        
-        const res = await api.GetHIT(params)
-        should.equal(res.HIT[0].Request.IsValid, 'True')
-    });
-
-
-    it('DisposeQualificationType', async () => {
-        const params =  { QualificationTypeId : qualificationTypeId }
-        
-        const res = await api.DisposeQualificationType(params)
-        should.equal(res.DisposeQualificationTypeResult[0].Request.IsValid, 'True')
-    })
-
-
-    it('ForceExpireHIT', async () => {
-        const params =  { HITId } 
-        
-        const res = await api.ForceExpireHIT(params)
-        should.equal(res.ForceExpireHITResult[0].Request.IsValid, 'True')
-    });
-
-
-    it('DisableHIT', async() => {
-        const hit = await api.CreateHIT(getHITParams())
-        
-        const res = await api.DisableHIT({ HITId: hit.HIT[0].HITId })        
-        should.equal(res.DisableHITResult[0].Request.IsValid, 'True')
-    })
-
-    it('ExtendHIT', async() => {
-        const hit = await api.CreateHIT(getHITParams())
-        
-        const res = await api.ExtendHIT({ HITId: hit.HIT[0].HITId })             
-        should.equal(res.ExtendHITResult[0].Request.IsValid, 'True')
-    })
-
-    it('DisposeHIT', async() => {
-        const hit = await api.CreateHIT(getHITParams())
-        
-        await api.ForceExpireHIT({ HITId: hit.HIT[0].HITId })
-
-        const res = await api.DisposeHIT({ HITId: hit.HIT[0].HITId })             
-        should.equal(res.DisposeHITResult[0].Request.IsValid, 'True')
+        it('DisposeHIT', async() => {
+            const res = await api.DisposeHIT({ HITId })             
+            should.equal(res.DisposeHITResult[0].Request.IsValid, 'True')
+        })
     })
 
 
@@ -218,8 +236,8 @@ describe('Testing throttling (give it a few secs)', function() {
         let pageNum = 1
 
         //Allow for extra time
-        this.timeout(20000)
-        this.slow(20000)
+        this.timeout(30000)
+        this.slow(30000)
         
         for(var i=0; i < MAX_ITERATIONS; i++){
             let res = await api.SearchHITs({ PageSize: 100, PageNumber: pageNum })

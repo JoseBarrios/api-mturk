@@ -62,13 +62,13 @@ describe('Amazon Mechanical Turk API', function() {
             
             const res = await api.BlockWorker(params)
             should.equal(res.BlockWorkerResult[0].Request.IsValid, 'True')
-        });
+        })
 
 
         it('GetBlockedWorkers', async () => {
             const res = await api.GetBlockedWorkers()
             should.equal(res.GetBlockedWorkersResult[0].Request.IsValid, 'True')
-        });
+        })
 
 
         it('UnblockWorker', async () => {
@@ -76,19 +76,19 @@ describe('Amazon Mechanical Turk API', function() {
             
             const res = await api.UnblockWorker(params)
             should.equal(res.UnblockWorkerResult[0].Request.IsValid, 'True')
-        });
+        })
 
 
         it('GetAccountBalance', async () => {
             const balance = await api.GetAccountBalance()
             should.equal(balance.GetAccountBalanceResult[0].AvailableBalance.Amount, 10000)
-        });
+        })
 
 
         it('GetQualificationRequests', async () => {
             const res = await api.GetQualificationRequests()
             should.equal(res.GetQualificationRequestsResult[0].Request.IsValid, 'True')
-        });
+        })
 
 
         it('GetRequesterStatistic', async () => {
@@ -96,7 +96,17 @@ describe('Amazon Mechanical Turk API', function() {
 
             const res = await api.GetRequesterStatistic(params)
             should.equal(res.GetStatisticResult[0].Request.IsValid, 'True')
-        });
+        })
+
+        
+        it('GetRequesterWorkerStatistic', async () => {
+            const params = { Statistic:"NumberAssignmentsApproved", 
+                             TimePeriod:"ThirtyDays", 
+                             WorkerId: WORKER_ID }
+
+            const res = await api.GetRequesterWorkerStatistic(params)
+            should.equal(res.GetStatisticResult[0].Request.IsValid, 'True')
+        })
     })
 
 

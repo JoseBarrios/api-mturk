@@ -145,6 +145,14 @@ describe('Amazon Mechanical Turk API', function() {
         })
 
 
+        it('GetBonusPayments', async () => {
+            const params = { HITId, HITTypeId }
+            
+            const res = await api.GetBonusPayments(params)
+            should.equal(res.GetBonusPaymentsResult[0].Request.IsValid, 'True')
+        })
+
+
         it('GetAssignmentsForHIT', async () => {
             const params = { HITId, HITTypeId }
             

@@ -35,10 +35,14 @@ function getHITParams() {
 
 
 describe('Amazon Mechanical Turk API', function() {
+    let api
+
+    before(async function() {
+        api = await mturk.createClient(config)
+    })
 
 
     it('CreateHIT', async () => {
-        const api = await mturk.createClient(config);
         const res = await api.CreateHIT(getHITParams())
         should.equal(res.HIT[0].Request.IsValid, 'True')
     })
@@ -47,7 +51,6 @@ describe('Amazon Mechanical Turk API', function() {
     it('SearchHITs', async () => {
         const params = {PageSize: 1}
 
-        const api = await mturk.createClient(config)
         const res = await api.req('SearchHITs', params)
         should(res.SearchHITsResult[0].HIT[0].HITId).be.a.String()
 
@@ -56,7 +59,6 @@ describe('Amazon Mechanical Turk API', function() {
 
 
     it('RegisterHITType', async () => {
-        const api = await mturk.createClient(config);
         const res = await api.RegisterHITType(getHITParams())
         should.equal(res.RegisterHITTypeResult[0].Request.IsValid, 'True')
 
@@ -64,10 +66,19 @@ describe('Amazon Mechanical Turk API', function() {
     })
 
 
-    it('CreateQualificationType', async function() {
-        let params = { Name:'SANDBOX_QUALIFICATION_4',Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', QualificationTypeStatus:'Active' }
+    it('ChangeHITTypeOfHIT', async () => {
+        const params = { HITId, HITTypeId }
+        
+        const res = await api.ChangeHITTypeOfHIT(params)
+        should.equal(res.ChangeHITTypeOfHITResult[0].Request.IsValid, 'True')
+    })
 
-        const api = await mturk.createClient(config)        
+
+    it('CreateQualificationType', async function() {
+        let params = { Name:'SANDBOX_QUALIFICATION_4',
+                       Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', 
+                       QualificationTypeStatus:'Active' }
+
         const res = await api.req('CreateQualificationType', params)
         should(res.QualificationType[0].QualificationTypeId).be.a.String()
 
@@ -76,7 +87,6 @@ describe('Amazon Mechanical Turk API', function() {
 
 
     it('GetAccountBalance', async () => {
-        const api = await mturk.createClient(config);
         const balance = await api.GetAccountBalance();
         should.equal(balance.GetAccountBalanceResult[0].AvailableBalance.Amount, 10000)
     });
@@ -84,15 +94,13 @@ describe('Amazon Mechanical Turk API', function() {
 
     it('BlockWorker', async() => {
         const params = {WorkerId:workerId, Reason:"Testing block operation" }
-
-        const api = await mturk.createClient(config)
+        
         const res = await api.BlockWorker(params)
         should.equal(res.BlockWorkerResult[0].Request.IsValid, 'True')
     });
 
 
     it('GetBlockedWorkers', async () => {
-        const api = await mturk.createClient(config)
         const res = await api.GetBlockedWorkers()
         should.equal(res.GetBlockedWorkersResult[0].Request.IsValid, 'True')
     });
@@ -100,16 +108,14 @@ describe('Amazon Mechanical Turk API', function() {
 
     it('UnblockWorker', async () => {
         const params = {WorkerId:workerId}
-
-        const api = await mturk.createClient(config)
+        
         const res = await api.UnblockWorker(params)
         should.equal(res.UnblockWorkerResult[0].Request.IsValid, 'True')
     });
 
     it('AssignQualification', async () => {
         const params = {QualificationTypeId: qualificationTypeId, WorkerId:workerId}
-
-        const api = await mturk.createClient(config)
+        
         const res = await api.AssignQualification(params)
         should.equal(res.AssignQualificationResult[0].Request.IsValid, 'True')
     });
@@ -117,8 +123,7 @@ describe('Amazon Mechanical Turk API', function() {
 
     it('GetHIT', async () => {
         const params =  { HITId:HITId }
-
-        const api = await mturk.createClient(config)
+        
         const res = await api.GetHIT(params)
         should.equal(res.HIT[0].Request.IsValid, 'True')
     });
@@ -126,8 +131,7 @@ describe('Amazon Mechanical Turk API', function() {
 
     it('DisposeQualificationType', async () => {
         const params =  { QualificationTypeId : qualificationTypeId }
-
-        const api = await mturk.createClient(config)
+        
         const res = await api.DisposeQualificationType(params)
         should.equal(res.DisposeQualificationTypeResult[0].Request.IsValid, 'True')
     })
@@ -135,15 +139,13 @@ describe('Amazon Mechanical Turk API', function() {
 
     it('ForceExpireHIT', async () => {
         const params =  { HITId:HITId } 
-
-        const api = await mturk.createClient(config)
+        
         const res = await api.ForceExpireHIT(params)
         should.equal(res.ForceExpireHITResult[0].Request.IsValid, 'True')
     });
 
 
     it('DisposeHIT', async() => {
-        const api = await mturk.createClient(config)
         const hit = await api.CreateHIT(getHITParams())
         
         await api.ForceExpireHIT({ HITId: hit.HIT[0].HITId })
@@ -190,6 +192,11 @@ describe('Amazon Mechanical Turk API', function() {
 //LEGACY SUPPORT CHECKS
 ///////////////////////
 describe('Testing throttling (give it a few secs)', function() {
+    let api
+
+    before(async function() {
+        api = await mturk.createClient(config)
+    })
 
     //Slows down requests to keep them under the allowed limits
     it('Multiple simulataneous requests', async function(done) {
@@ -199,7 +206,7 @@ describe('Testing throttling (give it a few secs)', function() {
         //Allow for extra time
         this.timeout(20000)
         this.slow(20000)
-        const api = await mturk.createClient(config)
+        
         for(var i=0; i < MAX_ITERATIONS; i++){
             let res = await api.SearchHITs({ PageSize: 100, PageNumber: pageNum })
             let currPage = Number(res.SearchHITsResult[0].PageNumber)

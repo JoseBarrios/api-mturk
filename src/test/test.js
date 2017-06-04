@@ -12,7 +12,7 @@ config.sandbox = true;
 
 
 //These variables are assign as we move through the tests
-const WORKER_ID = "A2Q1RSC9MWUTL2";
+const WORKER_ID = "A2Q1RSC9MWUTL2"
 
 
 function getHITParams() {
@@ -154,7 +154,6 @@ describe('Amazon Mechanical Turk API', function() {
             should.equal(res.GetQualificationsForQualificationTypeResult[0].Request.IsValid, 'True')
         })
 
-
         it('AssignQualification', async () => {
             const params = {QualificationTypeId: qualificationTypeId, WorkerId:WORKER_ID}
             
@@ -176,6 +175,16 @@ describe('Amazon Mechanical Turk API', function() {
             
             const res = await api.GetQualificationType(params)
             should.equal(res.QualificationType[0].Request.IsValid, 'True')
+        })
+
+
+        it('RevokeQualification', async () => {
+            const params = {QualificationTypeId: qualificationTypeId,
+                            SubjectId: WORKER_ID,
+                            Reason: "Example Reason"}
+            
+            const res = await api.RevokeQualification(params)
+            should.equal(res.RevokeQualificationResult[0].Request.IsValid, 'True')
         })
 
 

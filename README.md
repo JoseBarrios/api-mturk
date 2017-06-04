@@ -150,7 +150,7 @@ Operation  | Required Parameters | Unit test
 [RegisterHITType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RegisterHITTypeOperation.html) | { **Title**:String, **Description**:String, **Reward**:Object, **AssignmentDurationInSeconds**:Number } | ✓
 [RejectAssignment](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RejectAssignmentOperation.html) | { **AssignmentId**:String }
 [RejectQualificationRequest](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RejectQualificationRequestOperation.html) | { **QualificationRequestId**:String }
-[RevokeQualification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RevokeQualificationOperation.html) | { **Subject**:String, **QualificationTypeId**:String, **Reason**:String }
+[RevokeQualification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_RevokeQualificationOperation.html) | { **SubjectId**:String, **QualificationTypeId**:String, **Reason**:String } | ✓
 [SearchHITs](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SearchHITsOperation.html) | *None* | ✓
 [SearchQualificationTypes](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SearchQualificationTypesOperation.html) | { **MustBeRequestable**:Boolean }
 [SendTestEventNotification](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_SendTestEventNotificationOperation.html) | {  **Notification**:Object, **TestEventType**:Object } | ✓

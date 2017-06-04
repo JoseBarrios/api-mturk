@@ -188,7 +188,7 @@ describe('Amazon Mechanical Turk API', function() {
             should(res.SearchHITsResult[0].HIT[0].HITId).be.a.String()
 
             HITId = res.SearchHITsResult[0].HIT[0].HITId;
-        });
+        })
 
 
         it('GetHIT', async () => {
@@ -196,7 +196,15 @@ describe('Amazon Mechanical Turk API', function() {
             
             const res = await api.GetHIT(params)
             should.equal(res.HIT[0].Request.IsValid, 'True')
-        });
+        })
+
+
+        it('GetReviewResultsForHIT', async () => {
+            const params =  { HITId }
+            
+            const res = await api.GetReviewResultsForHIT(params)
+            should.equal(res.GetReviewResultsForHITResult[0].Request.IsValid, 'True')
+        })
 
 
         it('ChangeHITTypeOfHIT', async () => {

@@ -139,7 +139,7 @@ Operation  | Required Parameters | Unit test
 [GetQualificationsForQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationsForQualificationTypeOperation.html) | { **QualificationTypeId**:String } | ✓
 [GetQualificationRequests](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationRequestsOperation.html) | *None* | ✓
 [GetQualificationScore](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationScoreOperation.html) | {  **QualificationTypeId**:String, **SubjectId**:String} | ✓
-[GetQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationTypeOperation.html) | {  **QualificationTypeId**:String }
+[GetQualificationType](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetQualificationTypeOperation.html) | {  **QualificationTypeId**:String } | ✓
 [GetRequesterStatistic](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetRequesterStatisticOperation.html) | { **Statistic**:String, **TimePeriod**:String }
 [GetRequesterWorkerStatistic](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetRequesterWorkerStatisticOperation.html) | {**Statistic**:String, **WorkerId**:String, **TimePeriod**:String }
 [GetReviewableHITs](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_GetReviewableHITsOperation.html) | *None*

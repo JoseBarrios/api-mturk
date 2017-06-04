@@ -194,6 +194,15 @@ describe('Amazon Mechanical Turk API', function() {
         })
 
 
+        it('UpdateQualificationType', async () => {
+            const params = { QualificationTypeId: qualificationTypeId,
+                             QualificationTypeStatus: "Active" }
+            
+            const res = await api.UpdateQualificationType(params)
+            should.equal(res.QualificationType[0].Request.IsValid, 'True')
+        })
+
+
         it('RevokeQualification', async () => {
             const params = {QualificationTypeId: qualificationTypeId,
                             SubjectId: WORKER_ID,
@@ -234,14 +243,6 @@ describe('Amazon Mechanical Turk API', function() {
         })
 
 
-        it('GetReviewResultsForHIT', async () => {
-            const params =  { HITId }
-            
-            const res = await api.GetReviewResultsForHIT(params)
-            should.equal(res.GetReviewResultsForHITResult[0].Request.IsValid, 'True')
-        })
-
-
         it('ChangeHITTypeOfHIT', async () => {
             const params = { HITId, HITTypeId }
             
@@ -255,6 +256,14 @@ describe('Amazon Mechanical Turk API', function() {
             
             const res = await api.GetBonusPayments(params)
             should.equal(res.GetBonusPaymentsResult[0].Request.IsValid, 'True')
+        })
+
+
+        it('SetHITAsReviewing', async () => {
+            const params =  { HITId, "Revert": true }
+            
+            const res = await api.SetHITAsReviewing(params)
+            should.equal(res.SetHITAsReviewingResult[0].Request.IsValid, 'True')
         })
 
 
@@ -274,11 +283,11 @@ describe('Amazon Mechanical Turk API', function() {
         })
 
 
-        it('SetHITAsReviewing', async () => {
+        it('GetReviewResultsForHIT', async () => {
             const params =  { HITId }
             
-            const res = await api.SetHITAsReviewing(params)
-            should.equal(res.SetHITAsReviewingResult[0].Request.IsValid, 'True')
+            const res = await api.GetReviewResultsForHIT(params)
+            should.equal(res.GetReviewResultsForHITResult[0].Request.IsValid, 'True')
         })
 
 

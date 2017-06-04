@@ -83,6 +83,12 @@ describe('Amazon Mechanical Turk API', function() {
             const balance = await api.GetAccountBalance();
             should.equal(balance.GetAccountBalanceResult[0].AvailableBalance.Amount, 10000)
         });
+
+
+        it('GetQualificationRequests', async () => {
+            const res = await api.GetQualificationRequests();
+            should.equal(res.GetQualificationRequestsResult[0].Request.IsValid, 'True')
+        });
     })
 
 

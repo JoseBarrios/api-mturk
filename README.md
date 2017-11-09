@@ -55,7 +55,7 @@ mturk.createClient(config).then(function(api){
 //Import an XML file. You can use one of our examples in the templates folder *
 fs.readFile('./templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
   if(err){console.error(err);return}
-  
+
   //HIT options
   var params = {
     Title: "Create HIT Example",
@@ -67,15 +67,15 @@ fs.readFile('./templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
     LifetimeInSeconds: 86400 * 3, // Expire in 3 days
     Reward: {CurrencyCode:'USD', Amount:0.50}
   };
-  
+
   api.req('CreateHIT', params).then(function(res){
     //DO SOMETHING
   }).catch(console.error);
-  
+
 })
 
 ```
-\* To see the all available Question templates, go to our [templates folder](https://github.com/JoseBarrios/mturk-api/tree/master/templates)
+\* To see the all available Question templates, go to our [templates folder](https://github.com/JoseBarrios/api-mturk/tree/master/templates)
 
 
 

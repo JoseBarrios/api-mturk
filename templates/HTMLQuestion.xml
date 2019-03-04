@@ -1,5 +1,5 @@
 <HTMLQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2011-11-11/HTMLQuestion.xsd">
-  <HTMLContent><![CDATA[
+    <HTMLContent><![CDATA[
 <!DOCTYPE html>
 <html>
  <head>
@@ -17,5 +17,5 @@
 </html>
 ]]>
   </HTMLContent>
-  <FrameHeight>450</FrameHeight>
+  <FrameHeight>400</FrameHeight>
 </HTMLQuestion>

@@ -1,5 +1,5 @@
 var mturk = require('../index.js');
-var config = require('../config.js');
+var config = require('../../config-ipas/aws.json');
 var maxTimeout = 10000;
 var SLOW_RESPONSE = 1000;
 config.sandbox = true;
@@ -24,7 +24,7 @@ describe('Amazon Mechanical Turk API', function() {
                 var params = {
                     Title: "EXAMPLE",
                     Description: "Answer the questions on the screen",
-                    Question: _.escape(data),
+                    Question: data,
                     Keywords: "test, HIT",
                     AssignmentDurationInSeconds: 180, // in 3 minutes
                     AutoApprovalDelayInSeconds: 0, // auto approve the worker's anwser and pay to him/her
@@ -52,7 +52,7 @@ describe('Amazon Mechanical Turk API', function() {
 
     it('CreateQualificationType', function(done) {
         mturk.createClient(config).then(function(api){
-            var params = { Name:'SANDBOX_QUALIFICATION_2', Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', QualificationTypeStatus:'Active' }
+            var params = { Name:'SANDBOX_QUALIFICATION_3', Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', QualificationTypeStatus:'Active' }
             api.req('CreateQualificationType', params).then(function(res){
                 qualificationTypeId = res.QualificationType[0].QualificationTypeId;
                 done();

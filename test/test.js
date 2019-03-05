@@ -159,6 +159,15 @@ describe('Amazon Mechanical Turk API', function() {
     })
   });
 
+  it('DisposeHIT', function(done) {
+    mturk.createClient(config).then(function(api){
+      api.req('DisposeHIT', { HITId:HITId }).then(function(res){
+        done();
+      }).catch(done);
+    })
+  });
+
+
 });
 
 

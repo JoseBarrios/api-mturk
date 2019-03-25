@@ -84,9 +84,9 @@ function buildAPI(client, config, operations){
 function signRequest(config, operation, parameters){
     var message = {};
     message.Request= parameters;
-    message.AWSAccessKeyId=  config.access;
+    message.AWSAccessKeyId=  config.access || config.accessKeyId;
     message.Timestamp = new Date().toISOString();
-    var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA1, config.secret);
+    var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA1, config.secret || config.secretAccessKey);
     hmac.update(SERVICE + operation + message.Timestamp);
     message.Signature = hmac.finalize().toString(CryptoJS.enc.Base64);
     return message;

@@ -16,7 +16,7 @@ var SERVICE = 'AWSMechanicalTurkRequester';
 //Throttles client requests to a  rate-limited 3 request per second,  makes sure mturk does not return
 //503 errors when it is overwhealmed by multiple simultaneous requests (by requests in a for loop, for example)
 var requestQueue = new PromiseThrottle({
-    requestsPerSecond: 3,           // up to 1 request per second
+    requestsPerSecond: parseInt(process.env.MTURK_API_REQUEST_THROTTLE) || 3,  //Default 3 request per second limit
     promiseImplementation: Promise  // the Promise library you are using
 });
 

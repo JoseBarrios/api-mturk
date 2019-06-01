@@ -4,8 +4,8 @@ var config = require('../../config-oplab/aws.json');
 const expect = require("chai").expect;
 const assert = require("chai").assert;
 
-var mturk = require('../index.js');
-//var mturk = require('../api.js');
+//var mturk = require('../index.js');
+var mturk = require('../api.js');
 
 config.sandbox = true;
 var maxTimeout = 60000;
@@ -15,14 +15,12 @@ const AWS = require("aws-sdk");
 var fs = require('fs');
 var _ = require('lodash')
 
-//These variables are assign as we move through the tests
+//These variables are assigned as we move through the tests
 var workerId = "A2Q1RSC9MWUTL2";
 var qualificationTypeId = null;
 var HITId = null;
 var HITTypeId = null;
 var assignmentId = null;
-
-
 
 describe('API Version 2014-08-15', function() {
 
@@ -221,11 +219,11 @@ describe('API Version 2014-08-15', function() {
     })
   })
 
-  //////REQUIIRES AMAZON SQS SERVICE (AND SETUP)
-  //////DONT FORGET TO REMOVE 'SKIP' TO ENABLE THE TEST
-  //////IF YOU ARE A CONTRIBUTOR, DONT FORGET TO
-  //////REMOVE YOUR HOOK AND/OR CREDENTIALS BEFORE
-  //////PUSHING TO THE REPO
+  ////////REQUIIRES AMAZON SQS SERVICE (AND SETUP)
+  ////////DONT FORGET TO REMOVE 'SKIP' TO ENABLE THE TEST
+  ////////IF YOU ARE A CONTRIBUTOR, DONT FORGET TO
+  ////////REMOVE YOUR HOOK AND/OR CREDENTIALS BEFORE
+  ////////PUSHING TO THE REPO
   it('SetHITTypeNotification', function(done) {
     this.timeout(maxTimeout)
     this.slow(SLOW_RESPONSE);
@@ -286,23 +284,23 @@ describe('API Version 2014-08-15', function() {
 ///////////////////////
 //LEGACY SUPPORT CHECKS
 ///////////////////////
-describe('Testing throttling (give it a few secs)', function() {
+/*describe('Testing throttling (give it a few secs)', function() {*/
 
-  //Slows down requests to keep them under the allowed limits
-  it('Multiple simulataneous requests', function(done) {
-    //Allow for extra time
-    this.timeout(20000);
-    mturk.createClient(config).then(function(api){
-      var MAX_ITERATIONS = 30;
-      var pageNum = 1;
-      for(var i=0; i < MAX_ITERATIONS; i++){
-        api.req('SearchHITs', { PageSize: 100, PageNumber: pageNum }).then(function(response){
-          var currPage = Number(response.SearchHITsResult[0].PageNumber);
-          if(currPage >= MAX_ITERATIONS){ done(); }
-        }).catch(done);
-        pageNum++;
-      }
+////Slows down requests to keep them under the allowed limits
+//it('Multiple simulataneous requests', function(done) {
+////Allow for extra time
+//this.timeout(20000);
+//mturk.createClient(config).then(function(api){
+//var MAX_ITERATIONS = 30;
+//var pageNum = 1;
+//for(var i=0; i < MAX_ITERATIONS; i++){
+//api.req('SearchHITs', { PageSize: 100, PageNumber: pageNum }).then(function(response){
+//var currPage = Number(response.SearchHITsResult[0].PageNumber);
+//if(currPage >= MAX_ITERATIONS){ done(); }
+//}).catch(done);
+//pageNum++;
+//}
 
-    })
-  })
-});
+//})
+//})
+/*});*/

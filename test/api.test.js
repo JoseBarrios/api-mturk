@@ -10,7 +10,7 @@ const mturk = new MTurkAPI(config);
 
 describe("API Version 2017-01-17", function () {
 
-  it("GetAccountBalance", async function (done) {
+  it("GetAccountBalance", async function () {
     const res = await mturk.req("GetAccountBalance");
     expect(res).to.be.an('object');
     //expect(res.AvailableBalance).to.be.an('string');
@@ -21,7 +21,6 @@ describe("API Version 2017-01-17", function () {
     assert.equal(balanceFunc, 10000.00);
     const balanceProp = await mturk.accountBalance;
     assert.equal(balanceProp, 10000.00);
-    done();
   });
 
   it("CreateHIT", function() {
@@ -66,7 +65,6 @@ describe("API Version 2017-01-17", function () {
 
   it('ListHITs', async function() {
     const res = await mturk.req('ListHITs');
-    //console.log(JSON.stringify(res, null, " "))
     expect(res).to.be.an('object');
     expect(res.HITs).to.be.an('array');
     expect(res.HITs).to.be.an('array');
@@ -88,5 +86,17 @@ describe("API Version 2017-01-17", function () {
     expect(res.HITs[0].NumberOfAssignmentsCompleted).to.be.an('number');
   });
 
+  it('CreateQualificationType', async function() {
+      var params = { Name:'SANDBOX_QUALIFICATION_'+Date.now(), Description:'THIS IS A SANDBOX QUALIFICATION FOR TESTING PURPOSES', QualificationTypeStatus:'Active' }
+      const res = await mturk.req('CreateQualificationType', params);
+      expect(res.QualificationType).to.be.an('object');
+      expect(res.QualificationType.AutoGranted).to.be.a('boolean');
+      expect(res.QualificationType.CreationTime).to.be.a('number');
+      expect(res.QualificationType.Description).to.be.a('string');
+      expect(res.QualificationType.IsRequestable).to.be.a('boolean');
+      expect(res.QualificationType.Name).to.be.a('string');
+      expect(res.QualificationType.QualificationTypeId).to.be.a('string');
+      expect(res.QualificationType.QualificationTypeStatus).to.be.a('string');
+  });
 
 });

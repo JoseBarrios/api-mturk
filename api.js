@@ -14,6 +14,152 @@ deprecated.set("GetAccountBalance", {
   updateResponse: updateGetAccountBalanceResponse
 });
 
+deprecated.set("SearchHITs", {
+  updateOperation: "ListHITs",
+  updateParams: noop,
+  updateResponse: updateListHITsResponse
+});
+
+deprecated.set("CreateHIT", {
+  updateOperation: "CreateHIT",
+  updateParams: updateCreateHITParams,
+  updateResponse: updateCreateHITResponse
+});
+
+deprecated.set("CreateQualificationType", {
+  updateOperation: "CreateQualificationType",
+  updateParams: noop,
+  updateResponse: updateCreateQualificationTypeResult
+});
+
+deprecated.set("BlockWorker", {
+  updateOperation: "CreateWorkerBlock",
+  updateParams: noop,
+  updateResponse: updateCreateWorkerBlockResponse
+});
+
+deprecated.set("GetBlockedWorkers", {
+  updateOperation: "ListWorkerBlocks",
+  updateParams: noop,
+  updateResponse: updateListWorkerBlocksResponse
+});
+
+deprecated.set("AssignQualification", {
+  updateOperation: "AssociateQualificationWithWorker",
+  updateParams: noop,
+  updateResponse: updateAssociateQualificationWithWorkerResponse
+});
+
+deprecated.set("GetHIT", {
+  updateOperation: "GetHIT",
+  updateParams: noop,
+  updateResponse: updateGetHITResponse
+});
+
+deprecated.set("DisposeQualificationType", {
+  updateOperation: "DeleteQualificationType",
+  updateParams: noop,
+  updateResponse: updateDeleteQualificationTypeResponse
+});
+
+deprecated.set("SetHITTypeNotification", {
+  updateOperation: "UpdateNotificationSettings",
+  updateParams: updateUpdateNotificationSettingsParams,
+  updateResponse: updateUpdateNotificationSettingsResponse
+});
+
+deprecated.set("ForceExpireHIT", {
+  updateOperation: "UpdateExpirationForHIT",
+  updateParams: updateUpdateExpirationForHITParams,
+  updateResponse: updateUpdateExpirationForHITResponse,
+});
+
+deprecated.set("DisposeHIT", {
+  updateOperation: "DeleteHIT",
+  updateParams: noop,
+  updateResponse: updateDeleteHITResponse,
+});
+
+function updateDeleteHITResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.DisposeHITResult = [{ "Request": { "IsValid": "True" } }];
+  return response;
+}
+
+
+function updateUpdateExpirationForHITResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.ForceExpireHITResult = [{ "Request": { "IsValid": "True" } }];
+  return response;
+}
+
+function updateUpdateExpirationForHITParams(params){
+  params.ExpireAt = 0;
+  return params;
+}
+
+function updateUpdateNotificationSettingsParams(params){
+  params.Notification.EventTypes = params.Notification.EventType;
+  delete params.Notification.EventType;
+  return params;
+}
+
+
+function updateUpdateNotificationSettingsResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.SetHITTypeNotificationResult = [{ "Request": { "IsValid": "True" } }];
+  return response;
+}
+
+function updateDeleteQualificationTypeResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.DisposeQualificationTypeResult = [{
+    "Request": { "IsValid": "True" }
+  }];
+  return response;
+}
+
+function updateGetHITResponse(response){
+  response.HIT.Request = { "IsValid": "True" };
+  response.HIT.CreationTime = new Date(response.HIT.CreationTime);
+  response.HIT.Expiration = new Date(response.HIT.Expiration);
+  response.HIT.AutoApprovalDelayInSeconds = response.HIT.AutoApprovalDelayInSeconds.toString();
+  response.HIT.AssignmentDurationInSeconds = response.HIT.AssignmentDurationInSeconds.toString();
+  response.HIT.Reward = {
+    Amount: response.HIT.Reward,
+    CurrencyCode: "USD",
+    FormattedPrice: `$${response.HIT.Reward}`,
+  }
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.HIT = [ response.HIT ];
+  return response;
+}
+
+function updateAssociateQualificationWithWorkerResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.AssignQualificationResult = [ { "Request": { "IsValid": "True" } } ];
+  return response;
+}
+
+function updateListWorkerBlocksResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.BlockWorkerResult = [ { "Request": { "IsValid": "True" } } ];
+  response.GetBlockedWorkersResult = [{
+    "PageNumber": 1,
+    "NumResults": response.NumResults,
+    "TotalNumResults": response.NumResults,
+    "Request": { "IsValid": "True" },
+    "WorkerBlock": response.WorkerBlocks,
+  }]
+  return response;
+}
+
+function updateCreateWorkerBlockResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.BlockWorkerResult = [ { "Request": { "IsValid": "True" } } ];
+  return response;
+}
+
 function updateGetAccountBalanceResponse(response){
   return {
     "OperationRequest": { "RequestId": 'requests-like-this-noww-deprecateddd' },
@@ -25,12 +171,6 @@ function updateGetAccountBalanceResponse(response){
     }]
   }
 }
-
-deprecated.set("SearchHITs", {
-  updateOperation: "ListHITs",
-  updateParams: noop,
-  updateResponse: updateListHITsResponse
-});
 
 function updateListHITsResponse(response){
   response.HITs.forEach(HIT => {
@@ -48,7 +188,7 @@ function updateListHITsResponse(response){
   return {
     "OperationRequest": { "RequestId": '00000000-0000-0000-0000-000000000000' },
     "SearchHITsResult": [{
-      Request: { "IsValid": "True" },
+      "Request": { "IsValid": "True" },
       NumResults: response.HITs.length,
       TotalNumResults: response.HITs.length,
       PageNumber: 1,
@@ -56,12 +196,6 @@ function updateListHITsResponse(response){
     }]
   };
 }
-
-deprecated.set("CreateHIT", {
-  updateOperation: "CreateHIT",
-  updateParams: updateCreateHITParams,
-  updateResponse: updateCreateHITResponse
-});
 
 function updateCreateHITParams(params){
   //TODO: Qualifications
@@ -84,16 +218,15 @@ function updateCreateHITResponse(response){
   };
 }
 
-deprecated.set("CreateQualificationType", {
-  updateOperation: "CreateQualificationType",
-  updateParams: noop,
-  updateResponse: updateCreateQualificationTypeResult
-});
-
 function updateCreateQualificationTypeResult(response){
+  response.QualificationType.Request = { "IsValid": "True" };
+  response.QualificationType.CreationTime = new Date(response.QualificationType.CreationTime);
   return {
     "OperationRequest": { "RequestId": '00000000-0000-0000-0000-000000000000' },
-    "QualificationType": [response.QualificationType] };
+    "QualificationType": [
+      response.QualificationType
+    ]
+  };
 }
 
 class MTurkAPI {
@@ -184,10 +317,12 @@ class MTurkAPI {
       const options = this.getRequestOptions(headers, body )
       aws4.sign(options, this.credentials);
       const res = await this.response(options, body);
-      const isValid = this.isValid(res);
 
-      if(isValid) resolve(res);
-      else throw new Error(this.getErrorMessage(res));
+      if(this.isValid(res)) {
+        resolve(res);
+      } else {
+        throw new Error(this.getErrorMessage(res));
+      }
     })
   }
 
@@ -203,18 +338,15 @@ class MTurkAPI {
     const code = response.hasOwnProperty("TurkErrorCode")? `${response.TurkErrorCode}.` : "";
     const message = response.hasOwnProperty("Message")? `${response.Message}:` : "Invalid Request";
     return `${header} ${code} ${message}`
-
   }
+
   isValid(response){
     const isPrivateType = response.hasOwnProperty("__type");
     const hasMessage = response.hasOwnProperty("Message");
     const hasCode = response.hasOwnProperty("TurkErrorCode");
-    const isError = isPrivateType || hasMessage || hasCode;
-    return !isError;
+    const isValid = !isPrivateType && !hasMessage && !hasCode;
+    return isValid;
   }
-
-
-
 
   async response(options, body) {
     body = body || "{}";

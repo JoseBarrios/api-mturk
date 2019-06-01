@@ -4,8 +4,8 @@ var config = require('../../config-oplab/aws.json');
 const expect = require("chai").expect;
 const assert = require("chai").assert;
 
-//var mturk = require('../index.js');
-var mturk = require('../api.js');
+//var mturk = require('../deprecated.js');
+var mturk = require('../index.js');
 
 config.sandbox = true;
 var maxTimeout = 60000;

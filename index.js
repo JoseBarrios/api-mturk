@@ -1,134 +1,372 @@
-//    Imports
-var PromiseThrottle = require("promise-throttle");
-var CryptoJS = require("crypto-js");
-var soap = require("soap");
-var _ = require("lodash")
+const https = require("https");
+const aws4 = require("aws4");
+const moment = require("moment");
 
-//var WSDL = "https://mechanicalturk.amazonaws.com/AWSMechanicalTurk/AWSMechanicalTurkRequester.wsdl";
-var WSDL = __dirname + "/schemas/AWSMechanicalTurkRequester-2014-08-15.wsdl";
-var PRODUCTION = "https://mechanicalturk.amazonaws.com/";
-var SANDBOX = "https://mechanicalturk.sandbox.amazonaws.com/";
-var SERVICE = "AWSMechanicalTurkRequester";
+const deprecated = new Map();
 
-//Throttles client requests to a  rate-limited 3 request per second,  makes sure mturk does not return
-//503 errors when it is overwhealmed by multiple simultaneous requests (by requests in a for loop, for example)
-var requestQueue = new PromiseThrottle({
-  requestsPerSecond: 3, // up to 1 request per second
-  promiseImplementation: Promise // the Promise library you are using
+function noop(value){
+  return value;
+}
+
+deprecated.set("GetAccountBalance", {
+  updateOperation: "GetAccountBalance",
+  updateParams: noop,
+  updateResponse: updateGetAccountBalanceResponse
 });
 
-function MTurkAPI() {
+deprecated.set("SearchHITs", {
+  updateOperation: "ListHITs",
+  updateParams: noop,
+  updateResponse: updateListHITsResponse
+});
 
-  var mturk = this;
+deprecated.set("CreateHIT", {
+  updateOperation: "CreateHIT",
+  updateParams: updateCreateHITParams,
+  updateResponse: updateCreateHITResponse
+});
 
-  mturk.createClient = mturk.connect = function (config) {
-    return new Promise(function (resolve, reject) {
+deprecated.set("CreateQualificationType", {
+  updateOperation: "CreateQualificationType",
+  updateParams: noop,
+  updateResponse: updateCreateQualificationTypeResult
+});
 
-      soap.createClient(WSDL, function (err, SOAPClient) {
-        //Check that the SOAP client was created propery
-        if (err) {
-          console.error(err);
-          return reject(err)
-        }
-        //Configure client
-        var endPoint = config.sandbox ? SANDBOX : PRODUCTION;
-        SOAPClient.setEndpoint(endPoint);
+deprecated.set("BlockWorker", {
+  updateOperation: "CreateWorkerBlock",
+  updateParams: noop,
+  updateResponse: updateCreateWorkerBlockResponse
+});
 
-        //Get all the operations from the WSDL description
-        var operations = Object.keys(SOAPClient.AWSMechanicalTurkRequester.AWSMechanicalTurkRequesterPort);
+deprecated.set("GetBlockedWorkers", {
+  updateOperation: "ListWorkerBlocks",
+  updateParams: noop,
+  updateResponse: updateListWorkerBlocksResponse
+});
 
-        //Build an API based on the client, config and WSDL description
-        var api = buildAPI(SOAPClient, config, operations);
+deprecated.set("AssignQualification", {
+  updateOperation: "AssociateQualificationWithWorker",
+  updateParams: noop,
+  updateResponse: updateAssociateQualificationWithWorkerResponse
+});
 
-        //Main interface method
-        api.req = function (operation, params) {
-          params = params || {};
-          return new Promise(function (resolve, reject) {
-            requestQueue.add(request.bind(this, api, operation, params)).then(resolve).catch(reject);
-          })
-        };
+deprecated.set("GetHIT", {
+  updateOperation: "GetHIT",
+  updateParams: noop,
+  updateResponse: updateGetHITResponse
+});
 
-        resolve(api);
-      })
-    })
+deprecated.set("DisposeQualificationType", {
+  updateOperation: "DeleteQualificationType",
+  updateParams: noop,
+  updateResponse: updateDeleteQualificationTypeResponse
+});
+
+deprecated.set("SetHITTypeNotification", {
+  updateOperation: "UpdateNotificationSettings",
+  updateParams: updateUpdateNotificationSettingsParams,
+  updateResponse: updateUpdateNotificationSettingsResponse
+});
+
+deprecated.set("ForceExpireHIT", {
+  updateOperation: "UpdateExpirationForHIT",
+  updateParams: updateUpdateExpirationForHITParams,
+  updateResponse: updateUpdateExpirationForHITResponse,
+});
+
+deprecated.set("DisposeHIT", {
+  updateOperation: "DeleteHIT",
+  updateParams: noop,
+  updateResponse: updateDeleteHITResponse,
+});
+
+function updateDeleteHITResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.DisposeHITResult = [{ "Request": { "IsValid": "True" } }];
+  return response;
+}
+
+
+function updateUpdateExpirationForHITResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.ForceExpireHITResult = [{ "Request": { "IsValid": "True" } }];
+  return response;
+}
+
+function updateUpdateExpirationForHITParams(params){
+  params.ExpireAt = 0;
+  return params;
+}
+
+function updateUpdateNotificationSettingsParams(params){
+  params.Notification.EventTypes = params.Notification.EventType;
+  delete params.Notification.EventType;
+  return params;
+}
+
+
+function updateUpdateNotificationSettingsResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.SetHITTypeNotificationResult = [{ "Request": { "IsValid": "True" } }];
+  return response;
+}
+
+function updateDeleteQualificationTypeResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.DisposeQualificationTypeResult = [{
+    "Request": { "IsValid": "True" }
+  }];
+  return response;
+}
+
+function updateGetHITResponse(response){
+  response.HIT.Request = { "IsValid": "True" };
+  response.HIT.CreationTime = new Date(response.HIT.CreationTime);
+  response.HIT.Expiration = new Date(response.HIT.Expiration);
+  response.HIT.AutoApprovalDelayInSeconds = response.HIT.AutoApprovalDelayInSeconds.toString();
+  response.HIT.AssignmentDurationInSeconds = response.HIT.AssignmentDurationInSeconds.toString();
+  response.HIT.Reward = {
+    Amount: response.HIT.Reward,
+    CurrencyCode: "USD",
+    FormattedPrice: `$${response.HIT.Reward}`,
+  }
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.HIT = [ response.HIT ];
+  return response;
+}
+
+function updateAssociateQualificationWithWorkerResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.AssignQualificationResult = [ { "Request": { "IsValid": "True" } } ];
+  return response;
+}
+
+function updateListWorkerBlocksResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.BlockWorkerResult = [ { "Request": { "IsValid": "True" } } ];
+  response.GetBlockedWorkersResult = [{
+    "PageNumber": 1,
+    "NumResults": response.NumResults,
+    "TotalNumResults": response.NumResults,
+    "Request": { "IsValid": "True" },
+    "WorkerBlock": response.WorkerBlocks,
+  }]
+  return response;
+}
+
+function updateCreateWorkerBlockResponse(response){
+  response.OperationRequest = { "RequestId": '00000000-0000-0000-0000-000000000000' };
+  response.BlockWorkerResult = [ { "Request": { "IsValid": "True" } } ];
+  return response;
+}
+
+function updateGetAccountBalanceResponse(response){
+  return {
+    "OperationRequest": { "RequestId": 'requests-like-this-noww-deprecateddd' },
+    "GetAccountBalanceResult" : [{
+        "AvailableBalance": {
+          Amount: response.AvailableBalance,
+          Currency: "USD",
+      }
+    }]
+  }
+}
+
+function updateListHITsResponse(response){
+  response.HITs.forEach(HIT => {
+    HIT.CreationTime = new Date(HIT.CreationTime);
+    HIT.Expiration = new Date(HIT.Expiration);
+    HIT.AutoApprovalDelayInSeconds = HIT.AutoApprovalDelayInSeconds.toString();
+    HIT.AssignmentDurationInSeconds = HIT.AssignmentDurationInSeconds.toString();
+    HIT.Reward = {
+      Amount: HIT.Reward,
+      CurrencyCode: "USD",
+      FormattedPrice: `$${HIT.Reward}`,
+    }
+  })
+
+  return {
+    "OperationRequest": { "RequestId": '00000000-0000-0000-0000-000000000000' },
+    "SearchHITsResult": [{
+      "Request": { "IsValid": "True" },
+      NumResults: response.HITs.length,
+      TotalNumResults: response.HITs.length,
+      PageNumber: 1,
+      HIT: response.HITs
+    }]
   };
-
-  return mturk;
 }
 
-function request(api, operation, params) {
-  return new Promise(function (resolve, reject) {
-    //Check that request operation is valid, otherwise display error message
-    if (api[operation] && typeof api[operation] == "function") {
-      api[operation](params).then(resolve).catch(reject);
-    } else {
-      reject("Invalid Amazon Mechanical Turk API operation: '" + operation + "'. See the docs here: https://goo.gl/6RCpKU");
+function updateCreateHITParams(params){
+  //TODO: Qualifications
+  //expect(res.SearchHITsResult[0].HIT[0].QualificationRequirement).to.be.an('array');
+  //expect(res.SearchHITsResult[0].HIT[0].QualificationRequirement[0].QualificationTypeId).to.be.an('string');
+  const amount = params.Reward.Amount;
+  params.Reward = amount.toString();
+  return params;
+}
+
+function updateCreateHITResponse(response){
+  response.HIT.Request = { "IsValid": "True" };
+
+  return {
+    "OperationRequest": { "RequestId": '00000000-0000-0000-0000-000000000000' },
+    "NumResults": response.HIT.length,
+    "TotalNumResults": response.HIT.length,
+    "PageNumber": 1,
+    "HIT": [response.HIT]
+  };
+}
+
+function updateCreateQualificationTypeResult(response){
+  response.QualificationType.Request = { "IsValid": "True" };
+  response.QualificationType.CreationTime = new Date(response.QualificationType.CreationTime);
+  return {
+    "OperationRequest": { "RequestId": '00000000-0000-0000-0000-000000000000' },
+    "QualificationType": [
+      response.QualificationType
+    ]
+  };
+}
+
+class MTurkAPI {
+
+  //Backwards compatibility
+  static createClient(config){
+    return new Promise((resolve, reject) => {
+      const mturk = new MTurkAPI(config);
+      mturk.legacySupportEnabled = true;
+      resolve(mturk);
+    })
+  }
+
+  constructor(config) {
+    this.region = config.region || null;
+    this.sandbox = config.sandbox || null;
+    this.accessKeyId = config.accessKeyId || null;
+    this.secretAccessKey = config.secretAccessKey || null;
+    this.legacySupportEnabled = false;
+  }
+
+  get host() {
+    return `mturk-requester${this.sandbox? "-sandbox" : ""}.${this.region}.amazonaws.com`;
+  }
+
+  get service() {
+    return "mturk-requester";
+  }
+
+  get contentType() {
+    return "application/x-amz-json-1.1";
+  }
+
+  get path() {
+    return "/";
+  }
+
+  get credentials() {
+    return {
+      accessKeyId: this.accessKeyId,
+      secretAccessKey: this.secretAccessKey
     }
-  })
-}
+  }
 
-function buildAPI(client, config, operations) {
-  //Add a method for each available operation
-  var api = {};
-  _.forEach(operations, function (operation) {
-    api[operation] = function (params) {
-      params = params || {};
-      return new Promise(function (resolve, reject) {
-        client[operation](signRequest(config, operation, params), function (err, response) {
-          if (err) {
-            return reject(err)
-          }
-          var valid = isValidResponse(response);
-          valid ? resolve(response) : reject(getErrorMessage(response))
+  getRequestHeaders(operation){
+    return {
+      "Host": this.host,
+      "Content-Type": this.contentType,
+      "X-Amz-Target": this.xAmzTarget(operation),
+    }
+  }
+
+  getRequestOptions(headers, body){
+    return {
+      service: this.service,
+      region: this.region,
+      path: this.path,
+      body,
+      headers
+    };
+  }
+
+  xAmzTarget(operation) {
+    return `MTurkRequesterServiceV20170117.${operation}`;
+  }
+
+  async getAccountBalance(){
+    const res = await this.req("GetAccountBalance");
+    return Number(res.AvailableBalance);
+  }
+
+  get accountBalance(){
+    return new Promise(async(resolve, reject) => {
+      resolve(await this.getAccountBalance());
+    })
+  }
+
+  async req(operation, params, shouldSkipUndeprecator) {
+    const deprecatedInfo = deprecated.get(operation);
+    if(deprecatedInfo && this.legacySupportEnabled && !shouldSkipUndeprecator){
+      return await this.undeprecator(operation, params, deprecatedInfo)
+    }
+
+    return new Promise(async (resolve, reject) => {
+      let body = params || {};
+      body = JSON.stringify(body);
+      const headers = this.getRequestHeaders(operation)
+      const options = this.getRequestOptions(headers, body )
+      aws4.sign(options, this.credentials);
+      const res = await this.response(options, body);
+
+      if(this.isValid(res)) {
+        resolve(res);
+      } else {
+        throw new Error(this.getErrorMessage(res));
+      }
+    })
+  }
+
+  async undeprecator(operation, params, deprecatedInfo){
+    const updatedOperation = deprecatedInfo.updateOperation;
+    const updatedParams = deprecatedInfo.updateParams(params);
+    const response = await this.req(updatedOperation, updatedParams, true);
+    return deprecatedInfo.updateResponse(response);
+  }
+
+  getErrorMessage(response){
+    const header = response.hasOwnProperty("__type")? `${response.__type} -` : "";
+    const code = response.hasOwnProperty("TurkErrorCode")? `${response.TurkErrorCode}.` : "";
+    const message = response.hasOwnProperty("Message")? `${response.Message}:` : "Invalid Request";
+    return `${header} ${code} ${message}`
+  }
+
+  isValid(response){
+    const isPrivateType = response.hasOwnProperty("__type");
+    const hasMessage = response.hasOwnProperty("Message");
+    const hasCode = response.hasOwnProperty("TurkErrorCode");
+    const isValid = !isPrivateType && !hasMessage && !hasCode;
+    return isValid;
+  }
+
+  async response(options, body) {
+    body = body || "{}";
+    return new Promise((resolve, reject) => {
+      const req = https.request(options, function (res) {
+        const chunks = [];
+        res.on("data", function (chunk) {
+          chunks.push(chunk);
         });
-      });
-    }
-  })
-  return api;
-}
-
-function signRequest(config, operation, parameters) {
-  var message = {};
-  message.Request = parameters;
-  message.AWSAccessKeyId = config.access || config.accessKeyId;
-  message.Timestamp = new Date().toISOString();
-  var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA1, config.secret || config.secretAccessKey);
-  hmac.update(SERVICE + operation + message.Timestamp);
-  message.Signature = hmac.finalize().toString(CryptoJS.enc.Base64);
-  return message;
-}
-
-function isValidResponse(res) {
-  var validationProperty = "IsValid";
-  var property = search(res, validationProperty);
-  if (_.isEmpty(property)) return false;
-  return property[0][validationProperty] === "True" ? true : false;
-}
-
-function getErrorMessage(res) {
-  var validationProperty = "Error";
-  var property = search(res, validationProperty);
-  //Default error message is the response itself
-  var defaultMsg = JSON.stringify(res, null, "\t");
-
-  if (_.isEmpty(property)) {
-    return new Error(defaultMsg);
+        res.on("end", function () {
+          let response = Buffer.concat(chunks).toString();
+          response = JSON.parse(response);
+          resolve(response);
+        });
+      }).on("error", reject);
+      req.write(body);
+      req.end();
+    })
   }
-  var msg = property[0][validationProperty][0].Message || defaultMsg;
-  return new Error(msg);
-}
-
-function search(obj, key) {
-  if (_.has(obj, key)) {
-    return [obj];
-  }
-  var res = [];
-  _.forEach(obj, function (v) {
-    if (typeof v == "object" && (v = search(v, key)).length)
-      res.push.apply(res, v);
-  });
-  return res;
 }
 
 //EXPORT
-module.exports = new MTurkAPI();
+module.exports = MTurkAPI;

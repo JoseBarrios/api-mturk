@@ -5,7 +5,7 @@ const assert = require("chai").assert;
 const fs = require("fs");
 config.sandbox = true;
 
-var MTurkAPI = require("../api.js");
+var MTurkAPI = require("../index.js");
 const mturk = new MTurkAPI(config);
 
 describe("API Version 2017-01-17", function () {

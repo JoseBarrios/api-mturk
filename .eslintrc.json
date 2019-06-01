@@ -1,0 +1,30 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "jquery": true,
+    "mocha": true,
+    "mongo": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "globals": {
+    "viewModel": true,
+    "SinglyLinkedListDataController": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 9
+  },
+  "rules": {
+    "indent": [
+      "error",
+      2,
+     { "SwitchCase": 1 }
+    ],
+    "quotes": [
+      "error",
+      "double"
+    ]
+  }
+}

@@ -23,7 +23,6 @@ describe("API Version 2014-08-15", function() {
   it("GetAccountBalance", function(done) {
     mturk.createClient(config).then(function(api){
       api.req("GetAccountBalance").then(function(res) {
-        console.log(JSON.stringify(res, null, " "));
         expect(res.OperationRequest).to.be.an("object");
         expect(res.OperationRequest.RequestId).to.be.a("string");
         expect(res.GetAccountBalanceResult).to.be.an("array");

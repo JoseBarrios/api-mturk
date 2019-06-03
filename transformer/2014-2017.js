@@ -268,6 +268,7 @@ function updateCreateHITParams(params) {
   //expect(res.SearchHITsResult[0].HIT[0].QualificationRequirement[0].QualificationTypeId).to.be.an("string");
   const amount = params.Reward.Amount;
   params.Reward = amount.toString();
+  params.MaxAssignments = parseInt(params.MaxAssignments);
   return params;
 }
 

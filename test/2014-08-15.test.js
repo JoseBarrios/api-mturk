@@ -70,8 +70,9 @@ describe("API Version 2014-08-15", function() {
   it("SearchHITs", function(done) {
     this.timeout(10000);//10sec
     mturk.createClient(config).then(function(api){
-      var params = {PageSize: 10, PageNumber: 2}
-      api.req("SearchHITs", params).then(function(res){
+      //var params = {PageSize: 10, PageNumber: 2}
+      //api.req("SearchHITs", params).then(function(res){
+      api.req("SearchHITs").then(function(res){
         expect(res.OperationRequest).to.be.an("object");
         expect(res.OperationRequest.RequestId).to.be.a("string");
         expect(res.SearchHITsResult).to.be.an("array");

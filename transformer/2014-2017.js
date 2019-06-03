@@ -218,6 +218,9 @@ function updateGetAccountBalanceResponse(response) {
 }
 
 function updateListHITsParams(params){
+  params = params || {};
+  params.PageSize = params.PageSize || 10;
+  params.PageNumber = params.PageNumber || 1;
   params.MaxResults = params.PageSize;
   return params;
 }

@@ -211,6 +211,7 @@ function updateGetAccountBalanceResponse(response) {
       },
       "AvailableBalance": {
         Amount: response.AvailableBalance,
+        FormattedPrice: `$${response.AvailableBalance}`,
         Currency: "USD",
       }
     }]

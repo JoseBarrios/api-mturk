@@ -210,8 +210,8 @@ function updateGetAccountBalanceResponse(response) {
         "IsValid": "True"
       },
       "AvailableBalance": {
-        Amount: response.AvailableBalance,
-        FormattedPrice: `$${response.AvailableBalance}`,
+        Amount: response.AvailableBalance+"0",
+        FormattedPrice: `$${response.AvailableBalance.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`,
         Currency: "USD",
       }
     }]

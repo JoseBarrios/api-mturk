@@ -13,21 +13,14 @@ describe("API Version 2017-01-17", function () {
   it("GetAccountBalance", async function () {
     const res = await mturk.req("GetAccountBalance");
     expect(res).to.be.an('object');
-    //expect(res.AvailableBalance).to.be.an('string');
-    //done();
-
-    assert.equal(res.AvailableBalance, "10000.00");
-    const balanceFunc = await mturk.getAccountBalance();
-    assert.equal(balanceFunc, 10000.00);
-    const balanceProp = await mturk.accountBalance;
-    assert.equal(balanceProp, 10000.00);
+    expect(res.AvailableBalance).to.be.an('string');
   });
 
   it("CreateHIT", function() {
     fs.readFile('./templates/HTMLQuestion.xml', 'utf8', async function(err, data){
       if(err){throw new Error(err)}
       var params = {
-        Title: "EXAMPLE",
+        Title: "A_EXAMPLE",
         Description: "Answer the questions on the screen",
         Question: data,
         Keywords: "test, HIT",
@@ -35,7 +28,7 @@ describe("API Version 2017-01-17", function () {
         AutoApprovalDelayInSeconds: 0, // auto approve the worker's anwser and pay to him/her
         MaxAssignments: 1, // 100 worker
         LifetimeInSeconds: 86400 * 3, // 3 days
-        Reward: "0.01"
+        Reward: "0.02"
       };
 
       const res = await mturk.req('CreateHIT', params);
@@ -64,7 +57,7 @@ describe("API Version 2017-01-17", function () {
   });
 
   it('ListHITs', async function() {
-    const res = await mturk.req('ListHITs');
+    const res = await mturk.req('ListHITs', {MaxResults: 3});
     expect(res).to.be.an('object');
     expect(res.HITs).to.be.an('array');
     expect(res.HITs).to.be.an('array');

@@ -281,9 +281,6 @@ function updateCreateHITResponse(response) {
     "OperationRequest": {
       "RequestId": "00000000-0000-0000-0000-000000000000"
     },
-    "NumResults": response.HIT.length,
-    "TotalNumResults": response.HIT.length,
-    "PageNumber": 1,
     "HIT": [response.HIT]
   };
 }

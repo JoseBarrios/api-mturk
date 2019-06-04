@@ -38,7 +38,7 @@ describe("API Version 2014-08-15", function() {
 
   it("CreateHIT", function(done) {
     mturk.createClient(config).then(function(api){
-      fs.readFile("./templates/HTMLQuestion.xml", "utf8", function(err, data){
+      fs.readFile("./templates/ExternalQuestion.xml", "utf8", function(err, data){
         if(err){throw new Error(err)}
         var params = {
           Title: "EXAMPLE",
@@ -66,6 +66,38 @@ describe("API Version 2014-08-15", function() {
       })
     });
   });
+
+  it("GetHIT", function(done){
+   mturk.createClient(config).then(function(api){
+      api.req("GetHIT", {HITId}).then(function(res){
+        //TODO
+        console.log("TODO:GETHIT");
+        done();
+      }).catch(done);
+    })
+  })
+
+  it("GetAssignmentsForHIT", function(done){
+   mturk.createClient(config).then(function(api){
+      api.req("GetAssignmentsForHIT", {HITId}).then(function(res){
+        //TODO
+        console.log("TODO:GETASSIGNMENTSFORHIT");
+        done();
+      }).catch(done);
+    })
+  })
+
+  it("DisableHIT", function(done){
+   mturk.createClient(config).then(function(api){
+      api.req("DisableHIT", {HITId}).then(function(res){
+        //TODO
+        console.log("TODO:DISABLEHIT");
+        done();
+      }).catch(done);
+    })
+  })
+
+
 
   it("SearchHITs", function(done) {
     this.timeout(10000);//10sec

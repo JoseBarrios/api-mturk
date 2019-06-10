@@ -1,5 +1,18 @@
 const transformer = new Map();
 
+transformer.set("DisableHIT", {
+  updateOperation: "DeleteHIT",
+  updateParams: updateDisableHITParams,
+  updateResponse: updateDisableHITResponse
+});
+
+transformer.set("GetAssignmentsForHIT", {
+  updateOperation: "ListAssignmentsForHIT",
+  updateParams: updateListAssignmentsForHITParams,
+  updateResponse: updateListAssignmentsForHITResponse
+});
+
+
 transformer.set("GetAccountBalance", {
   updateOperation: "GetAccountBalance",
   updateParams: noop,
@@ -17,6 +30,13 @@ transformer.set("CreateHIT", {
   updateParams: updateCreateHITParams,
   updateResponse: updateCreateHITResponse
 });
+
+transformer.set("GetHIT", {
+  updateOperation: "GetHIT",
+  updateParams: noop,
+  updateResponse: updateGetHITResponse
+});
+
 
 transformer.set("CreateQualificationType", {
   updateOperation: "CreateQualificationType",
@@ -75,6 +95,40 @@ transformer.set("DisposeHIT", {
 module.exports = transformer;
 
 
+function updateListAssignmentsForHITParams(params) {
+  params.AssignmentStatuses = params.AssignmentStatus;
+  params.MaxResults = params.PageSize;
+  return params;
+}
+function updateListAssignmentsForHITResponse(response) {
+  response.GetAssignmentsForHITResult = [{
+    "Request": {
+      "IsValid": "True"
+    },
+    NumResults: response.NumResults,
+    PageNumber: 1,
+    TotalNumResults: response.NumResults,
+    Assignment: [response.Assignments],
+  }];
+
+  return response;
+}
+
+async function updateDisableHITParams(params, mturk) {
+  const res = await mturk.req("UpdateExpirationForHIT", {HITId:params.HITId, ExpireAt: 0});
+  return params;
+}
+
+function updateDisableHITResponse(response) {
+  response.DisableHITResult = [{
+    "Request": {
+      "IsValid": "True"
+    }
+  }];
+  return response;
+}
+
+
 function updateDeleteHITResponse(response) {
   response.OperationRequest = {
     "RequestId": "00000000-0000-0000-0000-000000000000"
@@ -108,6 +162,14 @@ function updateUpdateNotificationSettingsParams(params) {
   params.Notification.EventTypes = params.Notification.EventType;
   delete params.Notification.EventType;
   return params;
+}
+
+
+function updateGetHITResponse(response) {
+  response.HIT[0].Request = {
+     "IsValid": "True"
+  };
+  return response;
 }
 
 

@@ -70,31 +70,71 @@ describe("API Version 2014-08-15", function() {
   it("GetHIT", function(done){
    mturk.createClient(config).then(function(api){
       api.req("GetHIT", {HITId}).then(function(res){
-        //TODO
-        console.log("TODO:GETHIT");
+        expect(res.HIT).to.be.an("array");
+        expect(res.HIT[0].Request).to.be.an("object");
+        expect(res.HIT[0].Request.IsValid).to.be.a("string");
+        expect(res.HIT[0].HITId).to.be.a("string");
+        expect(res.HIT[0].HITTypeId).to.be.a("string");
         done();
       }).catch(done);
-    })
+   })
   })
 
   it("GetAssignmentsForHIT", function(done){
-   mturk.createClient(config).then(function(api){
+    mturk.createClient(config).then(function(api){
       api.req("GetAssignmentsForHIT", {HITId}).then(function(res){
-        //TODO
-        console.log("TODO:GETASSIGNMENTSFORHIT");
+        expect(res.GetAssignmentsForHITResult).to.be.an("array");
+        expect(res.GetAssignmentsForHITResult[0].Request).to.be.an("object");
+        expect(res.GetAssignmentsForHITResult[0].Request.IsValid).to.be.a("string");
+        assert.equal(res.GetAssignmentsForHITResult[0].Request.IsValid, "True");
+        expect(res.GetAssignmentsForHITResult[0].NumResults).to.be.a("number");
+        expect(res.GetAssignmentsForHITResult[0].TotalNumResults).to.be.a("number");
+        expect(res.GetAssignmentsForHITResult[0].PageNumber).to.be.a("number");
+        expect(res.GetAssignmentsForHITResult[0].Assignment).to.be.an("array");
+        /*expect(res.GetAssignmentsForHITResult[0].Assignment[0].AssignmentId).to.be.a("string");*/
+        //expect(res.GetAssignmentsForHITResult[0].Assignment[0].WorkerId).to.be.a("string");
+        //expect(res.GetAssignmentsForHITResult[0].Assignment[0].HITId).to.be.a("string");
+        //expect(res.GetAssignmentsForHITResult[0].Assignment[0].AssignmentStatus).to.be.a("string");
+        //expect(res.GetAssignmentsForHITResult[0].Assignment[0].AutoApprovalTime).to.be.a("date");
+        //expect(res.GetAssignmentsForHITResult[0].Assignment[0].AcceptTime).to.be.a("date");
+        //expect(res.GetAssignmentsForHITResult[0].Assignment[0].SubmitTime).to.be.a("date");
+        /*expect(res.GetAssignmentsForHITResult[0].Assignment[0].ApprovalTime).to.be.a("date");*/
         done();
       }).catch(done);
     })
   })
 
   it("DisableHIT", function(done){
-   mturk.createClient(config).then(function(api){
-      api.req("DisableHIT", {HITId}).then(function(res){
-        //TODO
-        console.log("TODO:DISABLEHIT");
-        done();
-      }).catch(done);
-    })
+    this.timeout(maxTimeout)
+    mturk.createClient(config).then(function(api){
+      fs.readFile("./templates/ExternalQuestion.xml", "utf8", function(err, data){
+        if(err){throw new Error(err)}
+        var params = {
+          Title: "TEMP",
+          Description: "Answer the questions on the screen",
+          Question: data,
+          Keywords: "test, HIT",
+          AssignmentDurationInSeconds: 180, // in 3 minutes
+          AutoApprovalDelayInSeconds: 0, // auto approve the worker"s anwser and pay to him/her
+          MaxAssignments: 1, // 100 worker
+          LifetimeInSeconds: 86400 * 3, // 3 days
+          Reward: {CurrencyCode:"USD", Amount:0.01}
+        };
+
+        api.req("CreateHIT", params).then(function(res){
+          const temp = res.HIT[0].HITId;
+          setTimeout(() => {
+            api.req("DisableHIT", {HITId: temp}).then(function(res){
+              expect(res.DisableHITResult).to.be.an("array");
+              expect(res.DisableHITResult[0].Request).to.be.an("object");
+              expect(res.DisableHITResult[0].Request.IsValid).to.be.a("string");
+              assert.equal(res.DisableHITResult[0].Request.IsValid, "True");
+              done();
+            }).catch(done);
+          }, 5000)
+        }).catch(done);
+      })
+    });
   })
 
 
@@ -318,24 +358,24 @@ describe("API Version 2014-08-15", function() {
 /////////////////////
 /*describe("Testing throttling (give it a few secs)", function() {*/
 
-  ////slows down requests to keep them under the allowed limits
-  //it("Multiple simulataneous requests", function(done) {
-    ////allow for extra time
-    //this.timeout(60000);
-    //mturk.createClient(config).then(function(api){
-      //var MAX_ITERATIONS = 30;
-      //var pageNum = 1;
-      //for(var i=0; i < MAX_ITERATIONS; i++){
-        //api.req("SearchHITs", { PageSize: 1, PageNumber: pageNum }).then(function(response){
-          //console.log(response);
-          //var currpage = Number(response.SearchHITsResult[0].PageNumber);
-          //if(currpage >= MAX_ITERATIONS){ done(); }
-        //}).catch(function(err){
-          //console.log(err);
-          //throw new Error(err);
-        //});
-        //pageNum++;
-      //}
-    //})
-  //})
+////slows down requests to keep them under the allowed limits
+//it("Multiple simulataneous requests", function(done) {
+////allow for extra time
+//this.timeout(60000);
+//mturk.createClient(config).then(function(api){
+//var MAX_ITERATIONS = 30;
+//var pageNum = 1;
+//for(var i=0; i < MAX_ITERATIONS; i++){
+//api.req("SearchHITs", { PageSize: 1, PageNumber: pageNum }).then(function(response){
+//console.log(response);
+//var currpage = Number(response.SearchHITsResult[0].PageNumber);
+//if(currpage >= MAX_ITERATIONS){ done(); }
+//}).catch(function(err){
+//console.log(err);
+//throw new Error(err);
+//});
+//pageNum++;
+//}
+//})
+//})
 /*});*/

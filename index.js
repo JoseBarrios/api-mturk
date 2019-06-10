@@ -95,7 +95,7 @@ class MTurkAPI {
 
   async undeprecator(operation, params, transformerInfo){
     const updatedOperation = transformerInfo.updateOperation;
-    const updatedParams = transformerInfo.updateParams(params);
+    const updatedParams = await transformerInfo.updateParams(params, this);
     const response = await this.req(updatedOperation, updatedParams, true);
     return transformerInfo.updateResponse(response, updatedParams, this);
   }

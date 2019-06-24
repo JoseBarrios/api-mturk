@@ -41,7 +41,7 @@ describe("API Version 2014-08-15", function() {
       fs.readFile("./templates/ExternalQuestion.xml", "utf8", function(err, data){
         if(err){throw new Error(err)}
         var params = {
-          Title: "EXAMPLE",
+          Title: "EXAMPLE_LEGACY",
           Description: "Answer the questions on the screen",
           Question: data,
           Keywords: "test, HIT",
@@ -108,6 +108,7 @@ describe("API Version 2014-08-15", function() {
     this.timeout(maxTimeout)
     mturk.createClient(config).then(function(api){
       fs.readFile("./templates/ExternalQuestion.xml", "utf8", function(err, data){
+
         if(err){throw new Error(err)}
         var params = {
           Title: "TEMP",
@@ -136,8 +137,6 @@ describe("API Version 2014-08-15", function() {
       })
     });
   })
-
-
 
   it("SearchHITs", function(done) {
     this.timeout(10000);//10sec

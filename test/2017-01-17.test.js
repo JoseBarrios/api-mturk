@@ -5,8 +5,10 @@ const assert = require("chai").assert;
 const fs = require("fs");
 config.sandbox = true;
 
+var maxTimeout = 60000;
 var MTurkAPI = require("../index.js");
 const mturk = new MTurkAPI(config);
+let tempHITId = null;
 
 describe("API Version 2017-01-17", function () {
 
@@ -53,6 +55,8 @@ describe("API Version 2017-01-17", function () {
       expect(res.HIT.Question).to.be.a('string');
       expect(res.HIT.Reward).to.be.a('string');
       expect(res.HIT.Title).to.be.a('string');
+
+      tempHITId = res.HIT.HITId;
     });
   });
 
@@ -90,6 +94,22 @@ describe("API Version 2017-01-17", function () {
       expect(res.QualificationType.Name).to.be.a('string');
       expect(res.QualificationType.QualificationTypeId).to.be.a('string');
       expect(res.QualificationType.QualificationTypeStatus).to.be.a('string');
+  });
+
+  it('UpdateExpirationForHIT', async function() {
+    const params = { HITId:tempHITId, ExpireAt:0 };
+    const res = await mturk.req('UpdateExpirationForHIT', params);
+    expect(res).to.be.an('object');
+  });
+
+
+  it('DeleteHIT', async function() {
+    this.timeout(maxTimeout)
+    setTimeout(async() => {
+      const params = { HITId:tempHITId };
+      const res = await mturk.req('DeleteHIT', params);
+      expect(res).to.be.an('object');
+    }, maxTimeout - 1000);
   });
 
 });

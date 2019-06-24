@@ -129,9 +129,7 @@ class MTurkAPI {
           if(this.isValid(response)) {
             resolve(response);
           } else {
-            //reject(new Error(this.getErrorMessage(response)))
             throw new Error(this.getErrorMessage(response));
-            //reject(this.getErrorMessage(response));
           }
         });
       }).on("error", reject);

@@ -325,9 +325,7 @@ async function updateListHITsResponse(response, params, mturk) {
 }
 
 function updateCreateHITParams(params) {
-  //TODO: Qualifications
-  //expect(res.SearchHITsResult[0].HIT[0].QualificationRequirement).to.be.an("array");
-  //expect(res.SearchHITsResult[0].HIT[0].QualificationRequirement[0].QualificationTypeId).to.be.an("string");
+  params.QualificationRequirements = params.QualificationRequirement;
   const amount = params.Reward.Amount;
   params.Reward = amount.toString();
   params.MaxAssignments = parseInt(params.MaxAssignments);
@@ -335,6 +333,10 @@ function updateCreateHITParams(params) {
 }
 
 function updateCreateHITResponse(response) {
+  //TODO: Change qualification data structure to match the old style
+  response.HIT.QualificationRequirement = response.HIT.QualificationRequirements;
+  delete response.HIT.QualificationRequirements;
+
   response.HIT.Request = {
     "IsValid": "True"
   };

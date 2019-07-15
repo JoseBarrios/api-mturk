@@ -22,7 +22,7 @@ describe("API Version 2017-01-17", function () {
     fs.readFile('./templates/HTMLQuestion.xml', 'utf8', async function(err, data){
       if(err){throw new Error(err)}
       var params = {
-        Title: "A_EXAMPLE",
+        Title: "A_EXAMPLE_2017",
         Description: "Answer the questions on the screen",
         Question: data,
         Keywords: "test, HIT",

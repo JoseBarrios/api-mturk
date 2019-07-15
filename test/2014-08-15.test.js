@@ -49,7 +49,19 @@ describe("API Version 2014-08-15", function() {
           AutoApprovalDelayInSeconds: 0, // auto approve the worker"s anwser and pay to him/her
           MaxAssignments: 1, // 100 worker
           LifetimeInSeconds: 86400 * 3, // 3 days
-          Reward: {CurrencyCode:"USD", Amount:0.01}
+          Reward: {CurrencyCode:"USD", Amount:0.01},
+          QualificationRequirement: [{
+            QualificationTypeId:"00000000000000000071",
+            Comparator:"EqualTo",
+            LocaleValues:[{
+              Country:"US",
+            }],
+          },
+          {
+            QualificationTypeId:"00000000000000000040 ",
+            Comparator:"GreaterThan",
+            IntegerValues:[1000]
+          }],
         };
 
         api.req("CreateHIT", params).then(function(res){
@@ -59,6 +71,7 @@ describe("API Version 2014-08-15", function() {
           expect(res.HIT[0].Request.IsValid).to.be.a("string");
           expect(res.HIT[0].HITId).to.be.a("string");
           expect(res.HIT[0].HITTypeId).to.be.a("string");
+          expect(res.HIT[0].QualificationRequirement).to.be.an("array");
           HITId = res.HIT[0].HITId;
           HITTypeId = res.HIT[0].HITTypeId;
           done()
@@ -68,7 +81,7 @@ describe("API Version 2014-08-15", function() {
   });
 
   it("GetHIT", function(done){
-   mturk.createClient(config).then(function(api){
+    mturk.createClient(config).then(function(api){
       api.req("GetHIT", {HITId}).then(function(res){
         expect(res.HIT).to.be.an("array");
         expect(res.HIT[0].Request).to.be.an("object");
@@ -77,7 +90,7 @@ describe("API Version 2014-08-15", function() {
         expect(res.HIT[0].HITTypeId).to.be.a("string");
         done();
       }).catch(done);
-   })
+    })
   })
 
   it("GetAssignmentsForHIT", function(done){

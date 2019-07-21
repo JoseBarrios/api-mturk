@@ -65,12 +65,15 @@ describe("API Version 2014-08-15", function() {
         };
 
         api.req("CreateHIT", params).then(function(res){
+          console.log(JSON.stringify(res, null, "  "))
           expect(res.OperationRequest).to.be.an("object");
           expect(res.HIT).to.be.an("array");
           expect(res.HIT[0].Request).to.be.an("object");
           expect(res.HIT[0].Request.IsValid).to.be.a("string");
           expect(res.HIT[0].HITId).to.be.a("string");
           expect(res.HIT[0].HITTypeId).to.be.a("string");
+          expect(res.HIT[0].CreationTime).to.be.a("string");
+          expect(res.HIT[0].Expiration).to.be.a("string");
           expect(res.HIT[0].QualificationRequirement).to.be.an("array");
           HITId = res.HIT[0].HITId;
           HITTypeId = res.HIT[0].HITTypeId;

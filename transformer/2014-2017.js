@@ -1,3 +1,4 @@
+const moment = require("moment");
 const transformer = new Map();
 
 transformer.set("DisableHIT", {
@@ -333,7 +334,8 @@ function updateCreateHITParams(params) {
 }
 
 function updateCreateHITResponse(response) {
-  //TODO: Change qualification data structure to match the old style
+  response.HIT.CreationTime = moment.unix(response.HIT.CreationTime).utc().format("YYYY-MM-DDTHH:mm:ss.000") + "Z";
+  response.HIT.Expiration = moment.unix(response.HIT.Expiration).utc().format("YYYY-MM-DDTHH:mm:ss.000") + "Z";
   response.HIT.QualificationRequirement = response.HIT.QualificationRequirements;
   delete response.HIT.QualificationRequirements;
 

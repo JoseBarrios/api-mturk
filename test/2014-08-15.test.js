@@ -46,8 +46,8 @@ describe("API Version 2014-08-15", function() {
           Question: data,
           Keywords: "test, HIT",
           AssignmentDurationInSeconds: 180, // in 3 minutes
-          AutoApprovalDelayInSeconds: 0, // auto approve the worker"s anwser and pay to him/her
-          MaxAssignments: 1, // 100 worker
+          AutoApprovalDelayInSeconds: 0, // auto approve the worker's anwser and pay them
+          MaxAssignments: 1, // 1 worker
           LifetimeInSeconds: 86400 * 3, // 3 days
           Reward: {CurrencyCode:"USD", Amount:0.01},
           QualificationRequirement: [{
@@ -338,6 +338,19 @@ describe("API Version 2014-08-15", function() {
     })
   });
 
+  it("ExtendHIT (time only)", function(done) {
+    mturk.createClient(config).then(function(api){
+      api.req("ExtendHIT", { HITId:HITId, ExpirationIncrementInSeconds: 31536000 }).then(function(res){
+        expect(res.OperationRequest).to.be.an("object");
+        expect(res.OperationRequest.RequestId).to.be.a("string");
+        expect(res.ForceExpireHITResult).to.be.an("array");
+        expect(res.ForceExpireHITResult[0].Request).to.be.an("object");
+        expect(res.ForceExpireHITResult[0].Request.IsValid).to.be.a("string");
+        done();
+      }).catch(done);
+    })
+  });
+
   it("DisposeHIT", function(done) {
     mturk.createClient(config).then(function(api){
       api.req("DisposeHIT", { HITId:HITId }).then(function(res){
@@ -354,29 +367,4 @@ describe("API Version 2014-08-15", function() {
 });
 
 
-/////////////////////
-//LEGACY SUPPORT CHECKS
-/////////////////////
-/*describe("Testing throttling (give it a few secs)", function() {*/
-
-////slows down requests to keep them under the allowed limits
-//it("Multiple simulataneous requests", function(done) {
-////allow for extra time
-//this.timeout(60000);
-//mturk.createClient(config).then(function(api){
-//var MAX_ITERATIONS = 30;
-//var pageNum = 1;
-//for(var i=0; i < MAX_ITERATIONS; i++){
-//api.req("SearchHITs", { PageSize: 1, PageNumber: pageNum }).then(function(response){
-//console.log(response);
-//var currpage = Number(response.SearchHITsResult[0].PageNumber);
-//if(currpage >= MAX_ITERATIONS){ done(); }
-//}).catch(function(err){
-//console.log(err);
-//throw new Error(err);
-//});
-//pageNum++;
-//}
-//})
-//})
-/*});*/
+// TODO: UNOFFICIAL LEGACY SUPPORT CHECKS (e.g., throttling)

@@ -80,6 +80,12 @@ transformer.set("ForceExpireHIT", {
   updateResponse: updateUpdateExpirationForHITResponse,
 });
 
+transformer.set("ExtendHIT", {
+  updateOperation: "UpdateExpirationForHIT",
+  updateParams: updateUpdateExpirationForHITParams,
+  updateResponse: updateUpdateExpirationForHITResponse,
+});
+
 transformer.set("DisposeHIT", {
   updateOperation: "DeleteHIT",
   updateParams: noop,
@@ -147,7 +153,7 @@ function updateUpdateExpirationForHITResponse(response) {
 }
 
 function updateUpdateExpirationForHITParams(params) {
-  params.ExpireAt = 0;
+  params.ExpireAt = params.ExpirationIncrementInSeconds || 0;
   return params;
 }
 

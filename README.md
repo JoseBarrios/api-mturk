@@ -1,4 +1,3 @@
-[![NPM version][npm-image]][npm-url]
 [![Downloads][download-badge]][npm-url]
 
 ### Install

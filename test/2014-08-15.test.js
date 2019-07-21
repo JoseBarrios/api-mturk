@@ -65,7 +65,6 @@ describe("API Version 2014-08-15", function() {
         };
 
         api.req("CreateHIT", params).then(function(res){
-          console.log(JSON.stringify(res, null, "  "))
           expect(res.OperationRequest).to.be.an("object");
           expect(res.HIT).to.be.an("array");
           expect(res.HIT[0].Request).to.be.an("object");

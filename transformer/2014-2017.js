@@ -32,13 +32,6 @@ transformer.set("CreateHIT", {
   updateResponse: updateCreateHITResponse
 });
 
-transformer.set("GetHIT", {
-  updateOperation: "GetHIT",
-  updateParams: noop,
-  updateResponse: updateGetHITResponse
-});
-
-
 transformer.set("CreateQualificationType", {
   updateOperation: "CreateQualificationType",
   updateParams: noop,
@@ -93,7 +86,6 @@ transformer.set("DisposeHIT", {
   updateResponse: updateDeleteHITResponse,
 });
 
-module.exports = transformer;
 
 
 function updateListAssignmentsForHITParams(params) {
@@ -165,15 +157,6 @@ function updateUpdateNotificationSettingsParams(params) {
   return params;
 }
 
-
-function updateGetHITResponse(response) {
-  response.HIT[0].Request = {
-     "IsValid": "True"
-  };
-  return response;
-}
-
-
 function updateUpdateNotificationSettingsResponse(response) {
   response.OperationRequest = {
     "RequestId": "00000000-0000-0000-0000-000000000000"
@@ -202,10 +185,12 @@ function updateGetHITResponse(response) {
   response.HIT.Request = {
     "IsValid": "True"
   };
-  response.HIT.CreationTime = new Date(response.HIT.CreationTime);
-  response.HIT.Expiration = new Date(response.HIT.Expiration);
+
+  response.HIT.CreationTime = moment.unix(response.HIT.CreationTime).utc().format("YYYY-MM-DDTHH:mm:ss.000") + "Z";
+  response.HIT.Expiration = moment.unix(response.HIT.Expiration).utc().format("YYYY-MM-DDTHH:mm:ss.000") + "Z";
   response.HIT.AutoApprovalDelayInSeconds = response.HIT.AutoApprovalDelayInSeconds.toString();
   response.HIT.AssignmentDurationInSeconds = response.HIT.AssignmentDurationInSeconds.toString();
+
   response.HIT.Reward = {
     Amount: response.HIT.Reward,
     CurrencyCode: "USD",
@@ -214,7 +199,9 @@ function updateGetHITResponse(response) {
   response.OperationRequest = {
     "RequestId": "00000000-0000-0000-0000-000000000000"
   };
+
   response.HIT = [response.HIT];
+
   return response;
 }
 
@@ -370,3 +357,4 @@ function noop(value) {
   return value;
 }
 
+module.exports = transformer;

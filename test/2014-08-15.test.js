@@ -82,19 +82,6 @@ describe("API Version 2014-08-15", function() {
     });
   });
 
-  it("GetHIT", function(done){
-    mturk.createClient(config).then(function(api){
-      api.req("GetHIT", {HITId}).then(function(res){
-        expect(res.HIT).to.be.an("array");
-        expect(res.HIT[0].Request).to.be.an("object");
-        expect(res.HIT[0].Request.IsValid).to.be.a("string");
-        expect(res.HIT[0].HITId).to.be.a("string");
-        expect(res.HIT[0].HITTypeId).to.be.a("string");
-        done();
-      }).catch(done);
-    })
-  })
-
   it("GetAssignmentsForHIT", function(done){
     mturk.createClient(config).then(function(api){
       api.req("GetAssignmentsForHIT", {HITId}).then(function(res){
@@ -272,7 +259,7 @@ describe("API Version 2014-08-15", function() {
         expect(res.HIT[0].HITId).to.be.a("string");
         expect(res.HIT[0].HITTypeId).to.be.a("string");
         expect(res.HIT[0].HITGroupId).to.be.a("string");
-        expect(res.HIT[0].CreationTime).to.be.a("date");
+        expect(res.HIT[0].CreationTime).to.be.a("string");
         expect(res.HIT[0].Title).to.be.a("string");
         expect(res.HIT[0].Description).to.be.a("string");
         expect(res.HIT[0].Question).to.be.a("string");
@@ -284,7 +271,7 @@ describe("API Version 2014-08-15", function() {
         expect(res.HIT[0].Reward.CurrencyCode).to.be.an("string");
         expect(res.HIT[0].Reward.FormattedPrice).to.be.an("string");
         expect(res.HIT[0].AutoApprovalDelayInSeconds).to.be.a("string");
-        expect(res.HIT[0].Expiration).to.be.a("date");
+        expect(res.HIT[0].Expiration).to.be.a("string");
         expect(res.HIT[0].AssignmentDurationInSeconds).to.be.a("string");
         expect(res.HIT[0].HITReviewStatus).to.be.a("string");
         done();
